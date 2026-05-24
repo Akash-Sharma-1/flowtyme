@@ -1,0 +1,26 @@
+---
+description: Backend conventions and service-specific gotchas (Notion, CalDAV, slot finder)
+globs: server/src/**/*.ts
+alwaysApply: false
+---
+
+# FlowTyme server rules
+
+## Service boundaries (prefer extending these)
+
+- Routes are thin: validate inputs, call services, return typed JSON.
+- `services/notion-parser.ts`: Notion Blocks traversal (remember: children are not auto-recursed).
+- `services/slot-finder.ts`: 15-minute step search; conflicts are flagged, not silently fixed.
+- `services/caldav.ts`: iCloud read/write via `tsdav` + `ical.js`.
+- Config and proposals persist in MongoDB (no filesystem config).
+
+## Critical invariants
+
+- Never store iCloud/Notion credentials in MongoDB (Phase 1). They belong in `server/.env`.
+- Column 3 “partition hints”: if a col-3 item matches an existing Apple Calendar event name, ignore it (avoid duplicates).
+- If an item is conflicting, keep it visible (fallback slot is OK), but default `accepted` to false.
+
+## CalDAV gotcha
+
+- `DAVCalendar.displayName` may be `string | Record<string, unknown>`. Use `String(cal.displayName || 'Unknown')`.
+

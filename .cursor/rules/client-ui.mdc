@@ -1,0 +1,28 @@
+---
+description: Frontend patterns for the FlowTyme planner UI
+globs: client/src/**/*.{ts,tsx,css}
+alwaysApply: false
+---
+
+# FlowTyme client rules
+
+## Page responsibilities
+
+- `Dashboard`: date selection + “Generate Plan” (calls server pipeline).
+- `Proposals`: day-view timeline with drag-and-drop edits; conflict resolution happens here.
+- `Confirm`: summary + final push to iCloud.
+- `Setup`: edits runtime config stored in MongoDB.
+
+## API usage
+
+- Prefer using `client/src/api.ts` for server calls, not ad-hoc `fetch`.
+- Types live in `client/src/types.ts`; keep request/response shapes aligned with server routes.
+
+## react-big-calendar styling
+
+- react-big-calendar CSS fights Tailwind. Prefer CSS var overrides in `client/src/index.css` (dark theme via vars).
+
+## Category colors
+
+- There is a static `CATEGORY_COLORS` map used in the proposals UI; unknown categories fall back to a muted color.
+

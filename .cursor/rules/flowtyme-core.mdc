@@ -1,0 +1,28 @@
+---
+description: FlowTyme core context (architecture + invariants)
+alwaysApply: true
+---
+
+# FlowTyme core context
+
+FlowTyme reads a Notion daily page + iCloud calendar, proposes time blocks, and pushes accepted items to Apple Calendar/Reminders via CalDAV.
+
+## Non-negotiable product decisions
+
+- Notion parsing is from the page’s visual **3-column block layout** (Blocks API; manual recursion).
+- Conflicts are never auto-resolved. Always surface them in UI and require user acceptance.
+- Column 3 pre-assignments are soft hints. Items that match existing calendar event names are ignored to avoid duplicates.
+- Defaults: tasks 60m, chores 15m; per-category overrides come from runtime Config stored in MongoDB.
+
+## iCloud CalDAV constraints
+
+- CalDAV (not EventKit/AppleScript/Shortcuts) for cloud-readiness.
+- `tsdav` calendar `displayName` may not be a string. Coerce with `String(...)` before comparing/returning.
+
+## Pointers
+
+- High-level guide: `AGENTS.md`
+- Notion structure: `parser-config.md`
+- API routes: `server/src/routes/*`
+- Core services: `server/src/services/*`
+

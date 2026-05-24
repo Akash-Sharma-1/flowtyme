@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #0f0f13;
+  --color-surface: #1a1a24;
+  --color-border: #2a2a38;
+  --color-accent: #7c6af7;
+  --color-accent-dim: #4d3fc7;
+  --color-text: #e8e8f0;
+  --color-muted: #8888aa;
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+/* react-big-calendar overrides */
+.rbc-calendar {
+  background: var(--color-surface);
+  border-radius: 0.75rem;
+  color: var(--color-text);
+}
+.rbc-header {
+  background: var(--color-bg);
+  border-color: var(--color-border) !important;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px;
+}
+.rbc-time-view,
+.rbc-time-content {
+  border-color: var(--color-border) !important;
+}
+.rbc-time-slot { border-color: var(--color-border) !important; }
+.rbc-day-slot .rbc-time-slot { border-color: transparent !important; }
+.rbc-timeslot-group {
+  border-color: var(--color-border) !important;
+  min-height: 48px;
+}
+.rbc-time-gutter .rbc-timeslot-group {
+  border-right: 1px solid var(--color-border);
+}
+.rbc-time-gutter .rbc-label {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+}
+.rbc-current-time-indicator {
+  background: var(--color-accent);
+  height: 2px;
+}
+.rbc-event {
+  border-radius: 6px !important;
+  border: none !important;
+  font-size: 0.78rem;
+  padding: 2px 6px;
+}
+.rbc-event.conflict {
+  background: rgba(248, 113, 113, 0.25) !important;
+  border: 1px solid var(--color-error) !important;
+}
+.rbc-today { background: rgba(124, 106, 247, 0.05) !important; }

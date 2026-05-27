@@ -26,18 +26,19 @@ interface CalEvent extends RBCEvent {
 }
 
 // partition name → background color for the day-view bands
+// Morning: golden sunrise · Afternoon: clear sky blue · Evening: sunset coral · Night: deep purple
 const PARTITION_BG: Record<string, string> = {
-  morning:   'rgba(99,102,241,0.13)',
-  afternoon: 'rgba(245,158,11,0.11)',
-  evening:   'rgba(249,115,22,0.13)',
-  night:     'rgba(139,92,246,0.15)',
+  morning:   'rgba(251,191,36,0.14)',   // golden yellow
+  afternoon: 'rgba(56,189,248,0.12)',   // sky blue
+  evening:   'rgba(251,113,133,0.16)',  // sunset coral/pink
+  night:     'rgba(139,92,246,0.20)',   // deep purple
 };
 
 const PARTITION_LABEL_COLOR: Record<string, string> = {
-  morning:   '#6366f1',
-  afternoon: '#f59e0b',
-  evening:   '#f97316',
-  night:     '#8b5cf6',
+  morning:   '#fbbf24',  // amber
+  afternoon: '#38bdf8',  // sky blue
+  evening:   '#fb7185',  // rose/coral
+  night:     '#8b5cf6',  // violet
 };
 
 // Apple Calendar name → color
@@ -52,6 +53,46 @@ const CALENDAR_COLORS: Record<string, string> = {
 
 const TASK_COLOR  = '#ef4444'; // bright red for proposed tasks
 const CHORE_COLOR = '#3b82f6'; // bright blue for proposed chores
+
+/** Custom event renderer — ≤20 min: "HH:mm–HH:mm  title" inline; >20 min: time range + title stacked */
+function EventComponent({ event }: { event: object }) {
+  const ev = event as CalEvent;
+  const durationMin = ((ev.end as Date).getTime() - (ev.start as Date).getTime()) / 60000;
+  const startStr = format(ev.start as Date, 'h:mma').toLowerCase();
+  const endStr   = format(ev.end   as Date, 'h:mma').toLowerCase();
+  const timeRange = `${startStr}–${endStr}`;
+
+  if (durationMin <= 30) {
+    return (
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 4,
+        height: '100%', padding: '0 4px', overflow: 'hidden',
+        lineHeight: 1.4,
+      }}>
+        <span style={{ fontSize: 11, opacity: 0.75, flexShrink: 0, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
+          {timeRange}
+        </span>
+        <span style={{
+          fontSize: 12, fontWeight: 600,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>
+          {ev.title as string}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: '2px 5px 3px', overflow: 'hidden', height: '100%' }}>
+      <div style={{ fontSize: 11, opacity: 0.99, fontVariantNumeric: 'tabular-nums', lineHeight: 1.3, marginBottom: 1 }}>
+        {timeRange}
+      </div>
+      <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', whiteSpace: 'nowrap', lineHeight: 1.4 }}>
+        {ev.title as string}
+      </div>
+    </div>
+  );
+}
 
 function colorFor(calendarName: string): string {
   return CALENDAR_COLORS[calendarName] || '#8888aa';
@@ -152,7 +193,10 @@ export default function Proposals() {
       const [eh, em] = p.endTime.split(':').map(Number);
       if (totalMins >= sh * 60 + sm && totalMins < eh * 60 + em) {
         const borderColor = PARTITION_LABEL_COLOR[p.name];
-        return borderColor ? { style: { borderLeft: `4px solid ${borderColor}70` } } : {};
+        const bg = PARTITION_BG[p.name];
+        return borderColor
+          ? { style: { borderLeft: `4px solid ${borderColor}70`, background: bg || 'transparent' } }
+          : {};
       }
     }
     return {};
@@ -392,6 +436,7 @@ export default function Proposals() {
               const ev = e as CalEvent;
               if (ev.proposalItem) setSelected(ev.proposalItem);
             }}
+            components={{ event: EventComponent as any }}
             style={{ height: '100%' }}
           />
         </div>

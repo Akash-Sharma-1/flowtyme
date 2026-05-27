@@ -50,7 +50,7 @@ body {
 .rbc-day-slot .rbc-time-slot { border-color: transparent !important; }
 .rbc-timeslot-group {
   border-color: #e5e5f0 !important;
-  min-height: 200px;
+  min-height: 60px !important;
 }
 .rbc-time-gutter .rbc-timeslot-group {
   border-right: 1px solid #e5e5f0;

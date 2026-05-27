@@ -1,8 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ICategoryMapping {
-  notionCategory: string;
-  appleCalendarName: string;
+  /** Source-native category label (e.g. "Health", "Office Work"). Plugin-agnostic. */
+  sourceCategory: string;
+  /** Target calendar name on the calendar backend. */
+  calendarName: string;
   color?: string;
 }
 
@@ -23,15 +25,14 @@ export interface IConfig extends Document {
   durationOverrides: IDurationOverride[];
   defaultTaskDurationMinutes: number;
   defaultChoreDurationMinutes: number;
-  notionDatabaseId: string;
-  notionDateProperty: string;
+  // notionDatabaseId + notionDateProperty removed — these now live in plugins.yaml
 }
 
 const ConfigSchema = new Schema<IConfig>({
   categoryMappings: [
     {
-      notionCategory: String,
-      appleCalendarName: String,
+      sourceCategory: String,
+      calendarName: String,
       color: String,
     },
   ],
@@ -50,8 +51,6 @@ const ConfigSchema = new Schema<IConfig>({
   ],
   defaultTaskDurationMinutes: { type: Number, default: 60 },
   defaultChoreDurationMinutes: { type: Number, default: 15 },
-  notionDatabaseId: { type: String, default: '' },
-  notionDateProperty: { type: String, default: 'Date' },
 });
 
 export default mongoose.model<IConfig>('Config', ConfigSchema);

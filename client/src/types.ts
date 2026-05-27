@@ -18,7 +18,8 @@ export interface ProposalItem {
   accepted: boolean;
   hasConflict: boolean;
   conflictWith?: string;
-  source: 'notion' | 'reminders';
+  /** Plugin id or source identifier (e.g. 'notion', 'reminders'). */
+  source: string;
 }
 
 export interface Proposal {
@@ -29,8 +30,10 @@ export interface Proposal {
 }
 
 export interface CategoryMapping {
-  notionCategory: string;
-  appleCalendarName: string;
+  /** Source-native category label (e.g. "Health", "Office Work"). */
+  sourceCategory: string;
+  /** Target calendar name on the calendar backend. */
+  calendarName: string;
   color?: string;
 }
 
@@ -45,7 +48,6 @@ export interface AppConfig {
   partitions: Partition[];
   defaultTaskDurationMinutes: number;
   defaultChoreDurationMinutes: number;
-  notionDatabaseId: string;
-  notionDateProperty: string;
   durationOverrides: { category: string; durationMinutes: number }[];
+  // notionDatabaseId + notionDateProperty removed — configure in plugins.yaml
 }

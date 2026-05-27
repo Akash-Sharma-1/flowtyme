@@ -1,15 +1,15 @@
 import ConfigModel from '../models/Config';
 import { readConfigFile } from './config-file';
 
-export async function mapCategoryToCalendar(notionCategory: string): Promise<string> {
+export async function mapCategoryToCalendar(sourceCategory: string): Promise<string> {
   const config = await ConfigModel.findOne();
-  if (!config) return notionCategory;
+  if (!config) return sourceCategory;
 
   const mapping = config.categoryMappings.find(
-    (m) => m.notionCategory.toLowerCase() === notionCategory.toLowerCase()
+    (m) => m.sourceCategory.toLowerCase() === sourceCategory.toLowerCase()
   );
 
-  return mapping?.appleCalendarName || notionCategory;
+  return mapping?.calendarName || sourceCategory;
 }
 
 export async function getConfig() {
@@ -27,8 +27,6 @@ export async function getConfig() {
       durationOverrides: [],
       defaultTaskDurationMinutes: 60,
       defaultChoreDurationMinutes: 15,
-      notionDatabaseId: process.env.NOTION_DATABASE_ID || '',
-      notionDateProperty: 'Date',
     });
   }
   return config;

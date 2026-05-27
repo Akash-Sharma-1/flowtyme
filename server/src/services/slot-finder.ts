@@ -1,6 +1,5 @@
 import { addMinutes, parseISO, startOfDay, setHours, setMinutes } from 'date-fns';
-import { CalendarEvent } from './caldav';
-import { NotionTask, NotionChore } from './notion-parser';
+import { SourceItem, CalendarEvent } from '../plugins/interfaces';
 import { getConfig, getDurationForCategory, mapCategoryToCalendar } from './category-mapper';
 import { IProposalItem } from '../models/Proposal';
 
@@ -9,9 +8,8 @@ interface TimeSlot {
   end: Date;
 }
 
-interface SlotFinderInput {
-  tasks: NotionTask[];
-  chores: NotionChore[];
+export interface SlotFinderInput {
+  items: SourceItem[];         // merged tasks + chores from all source plugins
   existingEvents: CalendarEvent[];
   dateStr?: string;
 }
@@ -29,50 +27,38 @@ export async function findSlots(input: SlotFinderInput): Promise<IProposalItem[]
 
   const partitionMap = buildPartitionMap(config.partitions, date);
 
-  const sortedTasks = sortByPartitionHints(input.tasks);
-  for (const task of sortedTasks) {
-    const durationMins = await getDurationForCategory(task.category, false);
-    const calendarName = await mapCategoryToCalendar(task.category);
-    const item = scheduleItem({
-      title: task.title,
-      type: 'task',
-      category: task.category,
-      calendarName,
-      source: 'notion',
-      durationMins,
-      partitionHint: task.partitionHint,
-      preferredStartTime: task.preferredStartTime,
-      partitionMap,
-      busySlots,
-      date,
-      idPrefix: 'task',
-    });
-    proposals.push(item);
-    if (!item.hasConflict) {
-      busySlots.push({ start: parseISO(item.startTime), end: parseISO(item.endTime) });
-    }
-  }
+  const sortedItems = sortByPartitionHints(input.items);
 
-  const sortedChores = sortByPartitionHints(input.chores);
-  for (const chore of sortedChores) {
-    const durationMins = config.defaultChoreDurationMinutes;
-    const item = scheduleItem({
-      title: chore.title,
-      type: 'chore',
-      category: 'Chores',
-      calendarName: 'Reminders',
-      source: 'reminders',
+  for (const item of sortedItems) {
+    const isChore = item.type === 'chore';
+    const durationMins = isChore
+      ? config.defaultChoreDurationMinutes
+      : await getDurationForCategory(item.category, false);
+    const calendarName = isChore
+      ? 'Reminders'
+      : await mapCategoryToCalendar(item.category);
+    const source = isChore ? 'reminders' : 'notion';
+    const idPrefix = isChore ? 'chore' : 'task';
+    const category = isChore ? 'Chores' : item.category;
+
+    const proposal = scheduleItem({
+      title: item.title,
+      type: item.type,
+      category,
+      calendarName,
+      source,
       durationMins,
-      partitionHint: chore.partitionHint,
-      preferredStartTime: chore.preferredStartTime,
+      partitionHint: item.partitionHint,
+      preferredStartTime: item.preferredStartTime,
       partitionMap,
       busySlots,
       date,
-      idPrefix: 'chore',
+      idPrefix,
     });
-    proposals.push(item);
-    if (!item.hasConflict) {
-      busySlots.push({ start: parseISO(item.startTime), end: parseISO(item.endTime) });
+
+    proposals.push(proposal);
+    if (!proposal.hasConflict) {
+      busySlots.push({ start: parseISO(proposal.startTime), end: parseISO(proposal.endTime) });
     }
   }
 
@@ -100,7 +86,7 @@ interface ScheduleItemInput {
   type: 'task' | 'chore';
   category: string;
   calendarName: string;
-  source: 'notion' | 'reminders';
+  source: string;
   durationMins: number;
   partitionHint?: string;
   preferredStartTime?: string;

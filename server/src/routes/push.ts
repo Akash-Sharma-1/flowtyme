@@ -1,8 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { pushEvent, pushReminder } from '../services/caldav';
+import { pluginRegistry } from '../plugins/registry';
 import ProposalModel from '../models/Proposal';
 import { parseISO } from 'date-fns';
-import { getConfig } from '../services/category-mapper';
 
 const router = Router();
 
@@ -11,7 +10,7 @@ router.post('/confirm/:proposalId', async (req: Request, res: Response) => {
     const proposal = await ProposalModel.findById(req.params.proposalId);
     if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
 
-    const config = await getConfig();
+    const calPlugin = await pluginRegistry.getPrimaryCalendarPlugin();
     const remindersListName = req.body.remindersListName || 'Reminders';
 
     const accepted = proposal.items.filter((item) => item.accepted);
@@ -20,7 +19,7 @@ router.post('/confirm/:proposalId', async (req: Request, res: Response) => {
     for (const item of accepted) {
       try {
         if (item.type === 'task') {
-          await pushEvent({
+          await calPlugin.pushEvent({
             title: item.title,
             startTime: parseISO(item.startTime),
             endTime: parseISO(item.endTime),
@@ -29,7 +28,7 @@ router.post('/confirm/:proposalId', async (req: Request, res: Response) => {
           });
         } else {
           // chore → push as Reminder VTODO
-          await pushReminder({
+          await calPlugin.pushReminder({
             title: item.title,
             dueTime: parseISO(item.startTime),
             listName: remindersListName,
@@ -44,7 +43,11 @@ router.post('/confirm/:proposalId', async (req: Request, res: Response) => {
     proposal.status = 'pushed';
     await proposal.save();
 
-    res.json({ results, total: accepted.length, pushed: results.filter((r) => r.status === 'pushed').length });
+    res.json({
+      results,
+      total: accepted.length,
+      pushed: results.filter((r) => r.status === 'pushed').length,
+    });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

@@ -11,7 +11,8 @@ export interface IProposalItem {
   accepted: boolean;
   hasConflict: boolean;
   conflictWith?: string;
-  source: 'notion' | 'reminders';
+  /** Plugin id or source identifier (e.g. 'notion', 'reminders', plugin-specific). */
+  source: string;
 }
 
 export interface IProposal extends Document {
@@ -33,7 +34,7 @@ const ProposalItemSchema = new Schema<IProposalItem>({
   accepted: { type: Boolean, default: true },
   hasConflict: { type: Boolean, default: false },
   conflictWith: String,
-  source: { type: String, enum: ['notion', 'reminders'] },
+  source: { type: String },
 });
 
 const ProposalSchema = new Schema<IProposal>(

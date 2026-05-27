@@ -43,7 +43,7 @@ export default function Setup() {
     if (!config) return;
     setConfig({
       ...config,
-      categoryMappings: [...config.categoryMappings, { notionCategory: '', appleCalendarName: '' }],
+      categoryMappings: [...config.categoryMappings, { sourceCategory: '', calendarName: '' }],
     });
   }
 
@@ -66,28 +66,21 @@ export default function Setup() {
     <div className="max-w-2xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-bold">Setup</h1>
-        <p className="text-[var(--color-muted)] mt-1">Configure Notion, categories, and time partitions</p>
+        <p className="text-[var(--color-muted)] mt-1">Configure categories, durations, and time partitions</p>
       </div>
 
-      {/* Notion */}
-      <Section title="Notion">
-        <Field label="Database ID">
-          <input
-            value={config.notionDatabaseId}
-            onChange={(e) => setConfig({ ...config, notionDatabaseId: e.target.value })}
-            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-            className={inputClass}
-          />
-        </Field>
-        <Field label="Date property name">
-          <input
-            value={config.notionDateProperty}
-            onChange={(e) => setConfig({ ...config, notionDateProperty: e.target.value })}
-            placeholder="Date"
-            className={inputClass}
-          />
-        </Field>
-      </Section>
+      {/* Data sources note */}
+      <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5">
+        <h2 className="text-sm font-semibold text-[var(--color-muted)] uppercase tracking-wide mb-2">Data Sources &amp; Calendars</h2>
+        <p className="text-sm text-[var(--color-text)]">
+          Sources and calendar backends are configured in{' '}
+          <code className="bg-[var(--color-bg)] px-1.5 py-0.5 rounded text-xs font-mono">plugins.yaml</code>{' '}
+          at the repo root. Edit that file to add or swap plugins — no code changes needed.
+        </p>
+        <p className="text-xs text-[var(--color-muted)] mt-2">
+          To generate a parser for a new source: run <code className="font-mono">/generate-parser</code> in Claude Code.
+        </p>
+      </div>
 
       {/* Durations */}
       <Section title="Default durations">
@@ -112,22 +105,23 @@ export default function Setup() {
       {/* Category mappings */}
       <Section title="Category → Calendar mapping">
         <p className="text-xs text-[var(--color-muted)] mb-3">
-          Map Notion category names to your iCloud calendar names
+          Map source category names to your calendar names. Run{' '}
+          <code className="font-mono">/map-categories</code> in Claude Code to auto-generate these.
         </p>
         <div className="space-y-2">
           {config.categoryMappings.map((m, i) => (
             <div key={i} className="flex items-center gap-2">
               <input
-                value={m.notionCategory}
-                onChange={(e) => updateMapping(i, 'notionCategory', e.target.value)}
-                placeholder="Notion category"
+                value={m.sourceCategory}
+                onChange={(e) => updateMapping(i, 'sourceCategory', e.target.value)}
+                placeholder="Source category"
                 className={`${inputClass} flex-1`}
               />
               <span className="text-[var(--color-muted)]">→</span>
               {calendarNames.length > 0 ? (
                 <select
-                  value={m.appleCalendarName}
-                  onChange={(e) => updateMapping(i, 'appleCalendarName', e.target.value)}
+                  value={m.calendarName}
+                  onChange={(e) => updateMapping(i, 'calendarName', e.target.value)}
                   className={`${inputClass} flex-1`}
                 >
                   <option value="">Select calendar…</option>
@@ -135,9 +129,9 @@ export default function Setup() {
                 </select>
               ) : (
                 <input
-                  value={m.appleCalendarName}
-                  onChange={(e) => updateMapping(i, 'appleCalendarName', e.target.value)}
-                  placeholder="Apple calendar name"
+                  value={m.calendarName}
+                  onChange={(e) => updateMapping(i, 'calendarName', e.target.value)}
+                  placeholder="Calendar name"
                   className={`${inputClass} flex-1`}
                 />
               )}

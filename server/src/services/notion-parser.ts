@@ -181,8 +181,6 @@ const PARTITION_KEYWORDS: Array<[string, string]> = [
   ['afternoon', 'afternoon'],
   ['evening', 'evening'],
   ['night', 'night'],
-  ['am', 'morning'],
-  ['pm', 'afternoon'],
 ];
 
 export function partitionIdFromHeading(text: string): string | null {
@@ -190,6 +188,19 @@ export function partitionIdFromHeading(text: string): string | null {
   if (!lower) return null;
   for (const [keyword, id] of PARTITION_KEYWORDS) {
     if (lower.includes(keyword)) return id;
+  }
+  // Parse start time from "Part N : Xam to Ypm" style headings.
+  // 'am'/'pm' keyword fallback above mis-maps multi-meridiem ranges, so we
+  // extract the first explicit time value and map by time-of-day thresholds.
+  const timeMatch = lower.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/);
+  if (timeMatch) {
+    const h = parseHour(Number(timeMatch[1]), timeMatch[3]);
+    const m = Number(timeMatch[2] ?? 0);
+    const totalMins = h * 60 + m;
+    if (totalMins < 9 * 60) return 'morning';
+    if (totalMins < 17 * 60 + 30) return 'afternoon';
+    if (totalMins < 21 * 60) return 'evening';
+    return 'night';
   }
   return null;
 }

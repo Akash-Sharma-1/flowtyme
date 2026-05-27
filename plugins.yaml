@@ -1,0 +1,52 @@
+# FlowTyme Plugin Configuration
+# Edit this file to add, enable, or disable data sources and calendar backends.
+# No code changes needed to swap plugins — restart the server after editing.
+#
+# IMPORTANT: Never put secrets (tokens, passwords) here.
+#            Use environment variables in server/.env instead.
+
+sources:
+  - id: notion-daily
+    type: notion          # maps to NotionSourcePlugin
+    enabled: true
+    config:
+      databaseId: "365201f2eb5f800dac1e000c4f883260"
+      dateProperty: "Date"
+      # NOTION_TOKEN is read from env var
+
+  # Future: Obsidian vault source (generate adapter with /generate-parser skill)
+  # - id: obsidian-vault
+  #   type: obsidian
+  #   enabled: false
+  #   config:
+  #     vaultPath: "~/Documents/vault"
+  #     dailyNotePattern: "Daily/YYYY-MM-DD.md"
+
+  # Future: plain markdown file source
+  # - id: markdown-tasks
+  #   type: markdown-file
+  #   enabled: false
+  #   config:
+  #     filePath: "~/tasks.md"
+
+calendars:
+  - id: icloud-primary
+    type: icloud          # maps to ICloudCalendarPlugin
+    enabled: true
+    config: {}
+    # ICLOUD_USERNAME + ICLOUD_APP_PASSWORD are read from env vars
+
+  # Future: Google Calendar
+  # - id: google-work
+  #   type: google
+  #   enabled: false
+  #   config:
+  #     clientId: "..."
+  #     calendarId: "primary"
+
+  # Future: export to .ics file (no auth needed)
+  # - id: ics-export
+  #   type: ics-file
+  #   enabled: false
+  #   config:
+  #     outputPath: "~/Desktop/flowtyme-export.ics"

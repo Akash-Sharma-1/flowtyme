@@ -1,4 +1,5 @@
 import ConfigModel from '../models/Config';
+import { readConfigFile } from './config-file';
 
 export async function mapCategoryToCalendar(notionCategory: string): Promise<string> {
   const config = await ConfigModel.findOne();
@@ -14,7 +15,8 @@ export async function mapCategoryToCalendar(notionCategory: string): Promise<str
 export async function getConfig() {
   let config = await ConfigModel.findOne();
   if (!config) {
-    config = await ConfigModel.create({
+    const fromFile = readConfigFile();
+    config = await ConfigModel.create(fromFile || {
       categoryMappings: [],
       partitions: [
         { name: 'morning', startTime: '06:00', endTime: '12:00' },

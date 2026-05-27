@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AppConfig, CalendarEvent, Proposal } from './types';
+import type { AppConfig, CalendarEvent, Proposal } from './types';
 
 const api = axios.create({ baseURL: '/api' });
 
@@ -23,13 +23,17 @@ export async function fetchNotionParsed(date?: string) {
   return r.data;
 }
 
-export async function generateProposal(date?: string): Promise<{
+export async function generateProposal(
+  date?: string,
+  tasks?: Array<{ title: string; category: string; partitionHint?: string; preferredStartTime?: string; checked: boolean }>,
+  chores?: Array<{ title: string; checked: boolean; partitionHint?: string; preferredStartTime?: string }>
+): Promise<{
   proposalId: string;
   date: string;
   items: Proposal['items'];
   existingEvents: CalendarEvent[];
 }> {
-  const r = await api.post('/slots/generate', { date });
+  const r = await api.post('/slots/generate', { date, tasks, chores });
   return r.data;
 }
 

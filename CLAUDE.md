@@ -120,7 +120,6 @@ The `DAVCalendar.displayName` property is typed as `string | Record<string, unkn
 
 ## Known issues / next to fix
 
-1. **MongoDB startup**: Server crashes if MongoDB not running. Need graceful degradation or `mongodb-memory-server` for dev.
 2. **Notion recursive block fetch**: Currently fetches one level deep per column. If user has nested toggles inside column, content inside them won't be parsed. Need deeper recursion for toggle blocks.
 3. **Col 3 name-match for calendar events**: Case-sensitive substring match. Could false-positive if a task name partially matches a calendar event title.
 4. **No loading state in Proposals page**: If CalDAV fetch is slow, calendar renders empty then jumps. Add skeleton.

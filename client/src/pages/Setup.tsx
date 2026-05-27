@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getConfig, saveConfig, fetchCalendars } from '../api';
-import { AppConfig, CategoryMapping, Partition } from '../types';
+import type { AppConfig, CategoryMapping, Partition } from '../types';
 
 export default function Setup() {
   const [config, setConfig] = useState<AppConfig | null>(null);

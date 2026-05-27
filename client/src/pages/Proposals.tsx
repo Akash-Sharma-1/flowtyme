@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Calendar, dateFnsLocalizer, Event as RBCEvent, SlotInfo } from 'react-big-calendar';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
-import { format, parse, startOfWeek, getDay, parseISO, addMinutes } from 'date-fns';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import type { Event as RBCEvent } from 'react-big-calendar';
+import _withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const withDragAndDrop: typeof _withDragAndDrop = ((_withDragAndDrop as any).default ?? _withDragAndDrop);
+import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { getProposal, updateProposalItems, fetchCalendarEvents } from '../api';
-import { ProposalItem, CalendarEvent } from '../types';
+import { getProposal, updateProposalItems, fetchCalendarEvents, getConfig } from '../api';
+import type { ProposalItem, CalendarEvent, AppConfig } from '../types';
 import { useNavigate } from 'react-router-dom';
 
 const locales = { 'en-US': enUS };
@@ -18,30 +21,60 @@ interface CalEvent extends RBCEvent {
   proposalItem?: ProposalItem;
   isExisting?: boolean;
   hasConflict?: boolean;
+  calendarName?: string;
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-  'Office Work': '#7c6af7',
-  Health: '#4ade80',
-  'Interview Prep': '#fbbf24',
-  'Side Hustle': '#60a5fa',
-  Chores: '#f97316',
-  General: '#a78bfa',
+// partition name → background color for the day-view bands
+const PARTITION_BG: Record<string, string> = {
+  morning:   'rgba(99,102,241,0.07)',
+  afternoon: 'rgba(245,158,11,0.07)',
+  evening:   'rgba(249,115,22,0.08)',
+  night:     'rgba(139,92,246,0.09)',
 };
 
-function colorForCategory(cat: string) {
-  return CATEGORY_COLORS[cat] || '#8888aa';
+const PARTITION_LABEL_COLOR: Record<string, string> = {
+  morning:   '#6366f1',
+  afternoon: '#f59e0b',
+  evening:   '#f97316',
+  night:     '#8b5cf6',
+};
+
+// Apple Calendar name → color
+const CALENDAR_COLORS: Record<string, string> = {
+  'Office Work':    '#7c6af7',
+  'Side Hustle':    '#60a5fa',
+  'Prep Work':      '#fbbf24',
+  'Home and Chores':'#f97316',
+  'Fitness and Meals': '#4ade80',
+  'Reminders':      '#a78bfa',
+};
+
+function colorFor(calendarName: string): string {
+  return CALENDAR_COLORS[calendarName] || '#8888aa';
+}
+
+function partitionFor(isoTime: string, partitions: AppConfig['partitions']): string | null {
+  const d = new Date(isoTime);
+  const mins = d.getHours() * 60 + d.getMinutes();
+  for (const p of partitions) {
+    const [sh, sm] = p.startTime.split(':').map(Number);
+    const [eh, em] = p.endTime.split(':').map(Number);
+    if (mins >= sh * 60 + sm && mins < eh * 60 + em) return p.name;
+  }
+  return null;
 }
 
 export default function Proposals() {
   const navigate = useNavigate();
   const [items, setItems] = useState<ProposalItem[]>([]);
   const [existingEvents, setExistingEvents] = useState<CalendarEvent[]>([]);
+  const [config, setConfig] = useState<AppConfig | null>(null);
   const [proposalId, setProposalId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<ProposalItem | null>(null);
+  const [activeTab, setActiveTab] = useState<'tasks' | 'chores'>('tasks');
 
   const date = localStorage.getItem('proposalDate') || format(new Date(), 'yyyy-MM-dd');
 
@@ -49,13 +82,15 @@ export default function Proposals() {
     async function load() {
       setLoading(true);
       try {
-        const [proposal, events] = await Promise.all([
+        const [proposal, events, cfg] = await Promise.all([
           getProposal(date),
           fetchCalendarEvents(date),
+          getConfig(),
         ]);
         setProposalId(proposal._id);
         setItems(proposal.items);
         setExistingEvents(events);
+        setConfig(cfg);
       } catch (e: any) {
         setError(e.response?.data?.error || e.message);
       } finally {
@@ -65,37 +100,72 @@ export default function Proposals() {
     load();
   }, [date]);
 
-  const calEvents: CalEvent[] = [
-    ...existingEvents.filter((e) => !e.isAllDay).map((e) => ({
+  const tasks  = items.filter(i => i.type === 'task');
+  const chores = items.filter(i => i.type === 'chore');
+
+  const existingCalEvents: CalEvent[] = existingEvents
+    .filter(e => !e.isAllDay)
+    .map(e => ({
       id: e.uid,
       title: e.title,
       start: new Date(e.startTime),
       end: new Date(e.endTime),
       isExisting: true,
-    })),
-    ...items.map((item) => ({
+      calendarName: e.calendarName,
+    }));
+
+  const taskCalEvents: CalEvent[] = [
+    ...existingCalEvents,
+    ...tasks.map(item => ({
       id: item.id,
       title: item.title,
       start: new Date(item.startTime),
       end: new Date(item.endTime),
       proposalItem: item,
       hasConflict: item.hasConflict,
+      calendarName: item.calendarName,
     })),
   ];
+
+  const choreCalEvents: CalEvent[] = [
+    ...existingCalEvents,
+    ...chores.map(item => ({
+      id: item.id,
+      title: item.title,
+      start: new Date(item.startTime),
+      end: new Date(item.endTime),
+      proposalItem: item,
+      hasConflict: item.hasConflict,
+      calendarName: item.calendarName,
+    })),
+  ];
+
+  const calEvents = activeTab === 'tasks' ? taskCalEvents : choreCalEvents;
+  const sidebarItems = activeTab === 'tasks' ? tasks : chores;
+
+  // color the background of each 15-min time slot by which partition it falls in
+  const slotPropGetter = useCallback((slotDate: Date) => {
+    if (!config) return {};
+    const totalMins = slotDate.getHours() * 60 + slotDate.getMinutes();
+    for (const p of config.partitions) {
+      const [sh, sm] = p.startTime.split(':').map(Number);
+      const [eh, em] = p.endTime.split(':').map(Number);
+      if (totalMins >= sh * 60 + sm && totalMins < eh * 60 + em) {
+        const bg = PARTITION_BG[p.name];
+        return bg ? { style: { background: bg } } : {};
+      }
+    }
+    return {};
+  }, [config]);
 
   const onEventDrop = useCallback(
     ({ event, start, end }: { event: object; start: Date | string; end: Date | string }) => {
       const ev = event as CalEvent;
       if (ev.isExisting) return;
-      setItems((prev) =>
-        prev.map((item) =>
+      setItems(prev =>
+        prev.map(item =>
           item.id === ev.id
-            ? {
-                ...item,
-                startTime: new Date(start).toISOString(),
-                endTime: new Date(end).toISOString(),
-                hasConflict: false,
-              }
+            ? { ...item, startTime: new Date(start).toISOString(), endTime: new Date(end).toISOString(), hasConflict: false }
             : item
         )
       );
@@ -107,14 +177,10 @@ export default function Proposals() {
     ({ event, start, end }: { event: object; start: Date | string; end: Date | string }) => {
       const ev = event as CalEvent;
       if (ev.isExisting) return;
-      setItems((prev) =>
-        prev.map((item) =>
+      setItems(prev =>
+        prev.map(item =>
           item.id === ev.id
-            ? {
-                ...item,
-                startTime: new Date(start).toISOString(),
-                endTime: new Date(end).toISOString(),
-              }
+            ? { ...item, startTime: new Date(start).toISOString(), endTime: new Date(end).toISOString() }
             : item
         )
       );
@@ -123,9 +189,7 @@ export default function Proposals() {
   );
 
   function toggleAccepted(id: string) {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, accepted: !item.accepted } : item))
-    );
+    setItems(prev => prev.map(item => item.id === id ? { ...item, accepted: !item.accepted } : item));
   }
 
   async function handleSave() {
@@ -143,143 +207,196 @@ export default function Proposals() {
 
   const eventStyleGetter = (event: object) => {
     const ev = event as CalEvent;
+    const color = colorFor(ev.calendarName || '');
     if (ev.isExisting) {
-      return { style: { background: '#2a2a38', color: '#8888aa', opacity: 0.7 } };
+      return { style: { background: `${color}20`, border: `1px solid ${color}55`, color: `${color}cc`, fontSize: '11px' } };
     }
     const item = ev.proposalItem;
     if (!item) return {};
-    const color = colorForCategory(item.category);
     if (ev.hasConflict) {
-      return {
-        style: {
-          background: 'rgba(248,113,113,0.15)',
-          border: '1px solid #f87171',
-          color: '#f87171',
-        },
-      };
+      return { style: { background: 'rgba(248,113,113,0.15)', border: '1px solid #f87171', color: '#f87171' } };
     }
     if (!item.accepted) {
-      return {
-        style: { background: 'rgba(136,136,170,0.1)', border: '1px solid #444', color: '#666' },
-      };
+      return { style: { background: 'rgba(136,136,170,0.08)', border: '1px solid #333', color: '#555' } };
     }
     return { style: { background: `${color}22`, border: `1px solid ${color}`, color } };
   };
 
-  const conflicts = items.filter((i) => i.hasConflict);
+  const conflicts = items.filter(i => i.hasConflict);
 
   if (loading) return <Loading />;
   if (error) return <ErrorBox msg={error} />;
 
   return (
-    <div className="flex gap-6 h-[calc(100vh-120px)]">
-      {/* sidebar */}
-      <div className="w-72 flex-shrink-0 flex flex-col gap-4 overflow-y-auto">
-        {conflicts.length > 0 && (
-          <div className="bg-red-500/10 border border-[var(--color-error)] rounded-xl p-3">
-            <p className="text-[var(--color-error)] text-xs font-semibold mb-2">
-              ⚠ {conflicts.length} conflict{conflicts.length > 1 ? 's' : ''} — drag to resolve
-            </p>
-            {conflicts.map((c) => (
-              <div key={c.id} className="text-xs text-[var(--color-muted)] py-1 border-b border-red-500/20">
-                {c.title}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-3">
-          <p className="text-xs text-[var(--color-muted)] uppercase tracking-wide mb-2 font-semibold">
-            Tasks & Chores
-          </p>
-          {items.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => toggleAccepted(item.id)}
-              className={`w-full text-left flex items-center gap-2 px-2 py-2 rounded-lg mb-1 text-xs transition-colors ${
-                item.accepted
-                  ? 'bg-[var(--color-bg)] text-[var(--color-text)]'
-                  : 'bg-transparent text-[var(--color-muted)] line-through'
-              } ${item.hasConflict ? 'border border-[var(--color-error)]' : ''}`}
-            >
+    <div className="flex flex-col gap-4 h-[calc(100vh-80px)]">
+      {/* partition legend */}
+      {config && (
+        <div className="flex gap-3 items-center flex-wrap">
+          {config.partitions.map(p => (
+            <span key={p.name} className="flex items-center gap-1.5 text-xs">
               <span
-                className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{ background: colorForCategory(item.category) }}
+                className="w-3 h-3 rounded-sm border"
+                style={{
+                  background: PARTITION_BG[p.name] || 'transparent',
+                  borderColor: PARTITION_LABEL_COLOR[p.name] || '#555',
+                }}
               />
-              <span className="flex-1 truncate">{item.title}</span>
-              <span className="text-[var(--color-muted)]">
-                {format(new Date(item.startTime), 'HH:mm')}
+              <span style={{ color: PARTITION_LABEL_COLOR[p.name] || '#999' }} className="capitalize font-medium">
+                {p.name}
               </span>
-            </button>
+              <span className="text-[var(--color-muted)]">{p.startTime}–{p.endTime}</span>
+            </span>
           ))}
-        </div>
-
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-dim)] disabled:opacity-50 text-white font-medium px-4 py-2.5 rounded-lg transition-colors"
-        >
-          {saving ? 'Saving…' : 'Save & Review →'}
-        </button>
-      </div>
-
-      {/* calendar */}
-      <div className="flex-1 min-w-0">
-        <DnDCalendar
-          localizer={localizer}
-          events={calEvents}
-          defaultView="day"
-          views={['day']}
-          date={new Date(date)}
-          onNavigate={() => {}}
-          step={15}
-          timeslots={4}
-          min={new Date(`${date}T06:00:00`)}
-          max={new Date(`${date}T23:00:00`)}
-          onEventDrop={onEventDrop as any}
-          onEventResize={onEventResize as any}
-          resizable
-          eventPropGetter={eventStyleGetter as any}
-          onSelectEvent={(e) => {
-            const ev = e as CalEvent;
-            if (ev.proposalItem) setSelected(ev.proposalItem);
-          }}
-          style={{ height: '100%' }}
-        />
-      </div>
-
-      {/* detail panel */}
-      {selected && (
-        <div className="w-64 flex-shrink-0 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-[var(--color-muted)] uppercase tracking-wide">Selected</span>
-            <button onClick={() => setSelected(null)} className="text-[var(--color-muted)] hover:text-[var(--color-text)]">✕</button>
-          </div>
-          <p className="font-medium text-sm">{selected.title}</p>
-          <div className="text-xs text-[var(--color-muted)] space-y-1">
-            <div>Category: {selected.category}</div>
-            <div>Calendar: {selected.calendarName}</div>
-            <div>Type: {selected.type}</div>
-            <div>
-              {format(new Date(selected.startTime), 'HH:mm')} –{' '}
-              {format(new Date(selected.endTime), 'HH:mm')}
-            </div>
-          </div>
-          {selected.hasConflict && (
-            <p className="text-[var(--color-error)] text-xs">⚠ Conflict — drag to resolve</p>
-          )}
-          <button
-            onClick={() => toggleAccepted(selected.id)}
-            className={`w-full text-xs py-1.5 rounded-lg border transition-colors ${
-              selected.accepted
-                ? 'border-[var(--color-error)] text-[var(--color-error)] hover:bg-red-500/10'
-                : 'border-[var(--color-success)] text-[var(--color-success)] hover:bg-green-500/10'
-            }`}
-          >
-            {selected.accepted ? 'Reject' : 'Accept'}
-          </button>
+          <span className="ml-auto flex gap-3">
+            {Object.entries(CALENDAR_COLORS).map(([cal, color]) => (
+              <span key={cal} className="flex items-center gap-1 text-xs text-[var(--color-muted)]">
+                <span className="w-2 h-2 rounded-full" style={{ background: color }} />
+                {cal}
+              </span>
+            ))}
+          </span>
         </div>
       )}
+
+      <div className="flex gap-6 flex-1 min-h-0">
+        {/* sidebar */}
+        <div className="w-64 flex-shrink-0 flex flex-col gap-3 overflow-y-auto">
+          {/* tabs */}
+          <div className="flex gap-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-1">
+            {(['tasks', 'chores'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 text-xs py-1.5 rounded-md font-medium transition-colors capitalize ${
+                  activeTab === tab
+                    ? 'bg-[var(--color-accent)] text-white'
+                    : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                }`}
+              >
+                {tab} ({tab === 'tasks' ? tasks.length : chores.length})
+              </button>
+            ))}
+          </div>
+
+          {conflicts.length > 0 && (
+            <div className="bg-red-500/10 border border-[var(--color-error)] rounded-xl p-3">
+              <p className="text-[var(--color-error)] text-xs font-semibold mb-1.5">
+                ⚠ {conflicts.length} conflict{conflicts.length > 1 ? 's' : ''} — drag to resolve
+              </p>
+              {conflicts.map(c => (
+                <div key={c.id} className="text-xs text-[var(--color-muted)] py-0.5 border-b border-red-500/20 truncate">
+                  {c.title}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-3 flex-1 overflow-y-auto">
+            <p className="text-xs text-[var(--color-muted)] uppercase tracking-wide mb-2 font-semibold">
+              {activeTab === 'tasks' ? 'Tasks' : 'Chores'}
+            </p>
+            {sidebarItems.map(item => {
+              const color = colorFor(item.calendarName);
+              const partition = config ? partitionFor(item.startTime, config.partitions) : null;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => toggleAccepted(item.id)}
+                  className={`w-full text-left flex items-center gap-2 px-2 py-1.5 rounded-lg mb-1 text-xs transition-colors ${
+                    item.accepted
+                      ? 'bg-[var(--color-bg)] text-[var(--color-text)]'
+                      : 'bg-transparent text-[var(--color-muted)] line-through'
+                  } ${item.hasConflict ? 'border border-[var(--color-error)]' : ''}`}
+                >
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+                  <span className="flex-1 truncate">{item.title}</span>
+                  {partition && (
+                    <span
+                      className="text-[9px] px-1 py-0.5 rounded capitalize flex-shrink-0"
+                      style={{
+                        color: PARTITION_LABEL_COLOR[partition] || '#999',
+                        background: PARTITION_BG[partition] || 'transparent',
+                      }}
+                    >
+                      {partition}
+                    </span>
+                  )}
+                  <span className="text-[var(--color-muted)] flex-shrink-0">
+                    {format(new Date(item.startTime), 'HH:mm')}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-dim)] disabled:opacity-50 text-white font-medium px-4 py-2.5 rounded-lg transition-colors"
+          >
+            {saving ? 'Saving…' : 'Save & Review →'}
+          </button>
+        </div>
+
+        {/* calendar */}
+        <div className="flex-1 min-w-0">
+          <DnDCalendar
+            localizer={localizer}
+            events={calEvents}
+            defaultView="day"
+            views={['day']}
+            date={new Date(date)}
+            onNavigate={() => {}}
+            step={15}
+            timeslots={4}
+            min={new Date(`${date}T06:00:00`)}
+            max={new Date(`${date}T23:00:00`)}
+            onEventDrop={onEventDrop as any}
+            onEventResize={onEventResize as any}
+            resizable
+            eventPropGetter={eventStyleGetter as any}
+            slotPropGetter={slotPropGetter as any}
+            onSelectEvent={(e) => {
+              const ev = e as CalEvent;
+              if (ev.proposalItem) setSelected(ev.proposalItem);
+            }}
+            style={{ height: '100%' }}
+          />
+        </div>
+
+        {/* detail panel */}
+        {selected && (
+          <div className="w-56 flex-shrink-0 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-[var(--color-muted)] uppercase tracking-wide">Selected</span>
+              <button onClick={() => setSelected(null)} className="text-[var(--color-muted)] hover:text-[var(--color-text)]">✕</button>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: colorFor(selected.calendarName) }} />
+              <p className="font-medium text-sm leading-tight">{selected.title}</p>
+            </div>
+            <div className="text-xs text-[var(--color-muted)] space-y-1">
+              <div>Category: {selected.category}</div>
+              <div>Calendar: {selected.calendarName}</div>
+              <div>Type: {selected.type}</div>
+              <div>{format(new Date(selected.startTime), 'HH:mm')} – {format(new Date(selected.endTime), 'HH:mm')}</div>
+            </div>
+            {selected.hasConflict && (
+              <p className="text-[var(--color-error)] text-xs">⚠ Conflict — drag to resolve</p>
+            )}
+            <button
+              onClick={() => toggleAccepted(selected.id)}
+              className={`w-full text-xs py-1.5 rounded-lg border transition-colors ${
+                selected.accepted
+                  ? 'border-[var(--color-error)] text-[var(--color-error)] hover:bg-red-500/10'
+                  : 'border-[var(--color-success)] text-[var(--color-success)] hover:bg-green-500/10'
+              }`}
+            >
+              {selected.accepted ? 'Reject' : 'Accept'}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

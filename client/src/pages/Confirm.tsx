@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
 import { getProposal, confirmProposal } from '../api';
-import { Proposal, ProposalItem } from '../types';
+import type { Proposal, ProposalItem } from '../types';
 
 export default function Confirm() {
   const [proposal, setProposal] = useState<Proposal | null>(null);

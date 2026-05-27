@@ -6,21 +6,26 @@ export interface NotionTask {
   title: string;
   category: string;
   partitionHint?: string;  // morning | afternoon | evening | night
+  preferredStartTime?: string;  // HH:mm — explicit time from Col 3, if any
   checked: boolean;
 }
 
 export interface NotionChore {
   title: string;
   checked: boolean;
+  partitionHint?: string;  // morning | afternoon | evening | night
+  preferredStartTime?: string;  // HH:mm
 }
 
 export interface ParsedDailyPage {
   tasks: NotionTask[];
   chores: NotionChore[];
-  partitionAssignments: Record<string, string[]>;  // partition → task titles pre-assigned
+  partitionAssignments: Record<string, PartitionAssignmentEntry[]>;
 }
 
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
+function getClient() {
+  return new Client({ auth: process.env.NOTION_TOKEN });
+}
 
 export async function fetchTodayPage(
   databaseId: string,
@@ -29,7 +34,7 @@ export async function fetchTodayPage(
 ): Promise<ParsedDailyPage> {
   const today = dateStr || format(new Date(), 'yyyy-MM-dd');
 
-  const response = await notion.databases.query({
+  const response = await getClient().databases.query({
     database_id: databaseId,
     filter: {
       property: dateProperty,
@@ -64,24 +69,57 @@ async function parseDailyPage(pageId: string): Promise<ParsedDailyPage> {
   const col3 = columnChildren[2];
 
   const [col1Blocks, col2Blocks, col3Blocks] = await Promise.all([
-    col1 ? fetchAllBlocks(col1.id) : Promise.resolve([]),
-    col2 ? fetchAllBlocks(col2.id) : Promise.resolve([]),
-    col3 ? fetchAllBlocks(col3.id) : Promise.resolve([]),
+    col1 ? fetchAllBlocksDeep(col1.id) : Promise.resolve([]),
+    col2 ? fetchAllBlocksDeep(col2.id) : Promise.resolve([]),
+    col3 ? fetchAllBlocksDeep(col3.id) : Promise.resolve([]),
   ]);
 
   const tasks = parseTasksFromColumn(col1Blocks);
   const chores = parseChoresFromColumn(col2Blocks);
   const partitionAssignments = parsePartitionsFromColumn(col3Blocks);
 
-  // annotate tasks with partition hints
-  for (const [partition, titles] of Object.entries(partitionAssignments)) {
-    for (const title of titles) {
-      const task = tasks.find((t) => t.title.toLowerCase() === title.toLowerCase());
-      if (task) task.partitionHint = partition;
-    }
-  }
+  applyPartitionHints(tasks, chores, partitionAssignments);
 
   return { tasks, chores, partitionAssignments };
+}
+
+/** Match Col 3 scheduling lines to tasks/chores (fuzzy) and attach hints + optional start time. */
+export function applyPartitionHints(
+  tasks: NotionTask[],
+  chores: NotionChore[],
+  partitionAssignments: Record<string, Array<{ title: string; preferredStartTime?: string }>>
+): void {
+  for (const [partition, entries] of Object.entries(partitionAssignments)) {
+    for (const entry of entries) {
+      const task = tasks.find((t) => titlesMatch(t.title, entry.title));
+      if (task) {
+        task.partitionHint = partition;
+        if (entry.preferredStartTime) task.preferredStartTime = entry.preferredStartTime;
+        continue;
+      }
+      const chore = chores.find((c) => titlesMatch(c.title, entry.title));
+      if (chore) {
+        chore.partitionHint = partition;
+        if (entry.preferredStartTime) chore.preferredStartTime = entry.preferredStartTime;
+      }
+    }
+  }
+}
+
+export function normalizeTitle(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function titlesMatch(a: string, b: string): boolean {
+  const na = normalizeTitle(a);
+  const nb = normalizeTitle(b);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  return na.includes(nb) || nb.includes(na);
 }
 
 function parseTasksFromColumn(blocks: BlockObjectResponse[]): NotionTask[] {
@@ -138,27 +176,83 @@ function parseChoresFromColumn(blocks: BlockObjectResponse[]): NotionChore[] {
   return chores;
 }
 
-const PARTITION_KEYWORDS: Record<string, string> = {
-  morning: 'morning',
-  afternoon: 'afternoon',
-  evening: 'evening',
-  night: 'night',
-  am: 'morning',
-  pm: 'afternoon',
-};
+const PARTITION_KEYWORDS: Array<[string, string]> = [
+  ['morning', 'morning'],
+  ['afternoon', 'afternoon'],
+  ['evening', 'evening'],
+  ['night', 'night'],
+  ['am', 'morning'],
+  ['pm', 'afternoon'],
+];
 
-function parsePartitionsFromColumn(blocks: BlockObjectResponse[]): Record<string, string[]> {
-  const assignments: Record<string, string[]> = {};
+export function partitionIdFromHeading(text: string): string | null {
+  const lower = text.trim().toLowerCase();
+  if (!lower) return null;
+  for (const [keyword, id] of PARTITION_KEYWORDS) {
+    if (lower.includes(keyword)) return id;
+  }
+  return null;
+}
+
+export interface PartitionAssignmentEntry {
+  title: string;
+  preferredStartTime?: string;
+}
+
+/** Parse explicit time from Col 3 line, e.g. "Standup 9:30am", "Trees study at 14:00". */
+export function parseSchedulingLine(rawText: string): PartitionAssignmentEntry {
+  const timePatterns: Array<{ re: RegExp; pick: (m: RegExpMatchArray) => string }> = [
+    {
+      re: /\b(\d{1,2}):(\d{2})\s*(am|pm)?\b/i,
+      pick: (m) => toHHmm(parseHour(Number(m[1]), m[3]), Number(m[2])),
+    },
+    {
+      re: /\b(?:at\s+)?(\d{1,2})\s*(am|pm)\b/i,
+      pick: (m) => toHHmm(parseHour(Number(m[1]), m[2]), 0),
+    },
+  ];
+
+  for (const { re, pick } of timePatterns) {
+    const match = rawText.match(re);
+    if (match) {
+      const title = rawText.replace(match[0], '').replace(/\s+/g, ' ').trim();
+      return { title: title || rawText.trim(), preferredStartTime: pick(match) };
+    }
+  }
+
+  return { title: rawText.trim() };
+}
+
+function parseHour(hour: number, ampm?: string): number {
+  if (!ampm) return hour;
+  const mer = ampm.toLowerCase();
+  if (mer === 'am') return hour === 12 ? 0 : hour;
+  return hour === 12 ? 12 : hour + 12;
+}
+
+function toHHmm(hour: number, minute: number): string {
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function parsePartitionsFromColumn(
+  blocks: BlockObjectResponse[]
+): Record<string, PartitionAssignmentEntry[]> {
+  const assignments: Record<string, PartitionAssignmentEntry[]> = {};
   let currentPartition: string | null = null;
 
   for (const block of blocks) {
-    const text = extractPlainText(block).trim().toLowerCase();
-    if (!text) continue;
+    const rawText = extractPlainText(block).trim();
+    if (!rawText) continue;
 
-    if (block.type === 'heading_1' || block.type === 'heading_2' || block.type === 'heading_3') {
-      const matched = Object.entries(PARTITION_KEYWORDS).find(([k]) => text.includes(k));
-      if (matched) {
-        currentPartition = matched[1];
+    const isHeading =
+      block.type === 'heading_1' || block.type === 'heading_2' || block.type === 'heading_3';
+    const isPartitionHeader =
+      isHeading || (block.type === 'paragraph' && partitionIdFromHeading(rawText) !== null);
+
+    if (isPartitionHeader) {
+      const partition = partitionIdFromHeading(rawText);
+      if (partition) {
+        currentPartition = partition;
         if (!assignments[currentPartition]) assignments[currentPartition] = [];
       }
       continue;
@@ -171,8 +265,8 @@ function parsePartitionsFromColumn(blocks: BlockObjectResponse[]): Record<string
         block.type === 'to_do' ||
         block.type === 'paragraph')
     ) {
-      const rawText = extractPlainText(block).trim();
-      if (rawText) assignments[currentPartition].push(rawText);
+      const entry = parseSchedulingLine(rawText);
+      if (entry.title) assignments[currentPartition].push(entry);
     }
   }
 
@@ -193,7 +287,7 @@ async function fetchAllBlocks(blockId: string): Promise<BlockObjectResponse[]> {
   let cursor: string | undefined;
 
   do {
-    const resp = await notion.blocks.children.list({
+    const resp = await getClient().blocks.children.list({
       block_id: blockId,
       start_cursor: cursor,
       page_size: 100,
@@ -203,6 +297,21 @@ async function fetchAllBlocks(blockId: string): Promise<BlockObjectResponse[]> {
   } while (cursor);
 
   return blocks;
+}
+
+/** Flatten nested blocks (e.g. toggles) so Col 3 items inside toggles are parsed. */
+async function fetchAllBlocksDeep(blockId: string): Promise<BlockObjectResponse[]> {
+  const top = await fetchAllBlocks(blockId);
+  const out: BlockObjectResponse[] = [];
+
+  for (const block of top) {
+    out.push(block);
+    if (block.has_children && block.type !== 'child_page' && block.type !== 'child_database') {
+      out.push(...(await fetchAllBlocksDeep(block.id)));
+    }
+  }
+
+  return out;
 }
 
 function extractPlainText(block: BlockObjectResponse): string {

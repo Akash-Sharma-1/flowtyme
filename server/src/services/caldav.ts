@@ -32,6 +32,27 @@ function makeDAVClient() {
   });
 }
 
+function expandEvent(ev: ICAL.Event, rangeStart: Date, rangeEnd: Date): Array<{ start: Date; end: Date }> {
+  const results: Array<{ start: Date; end: Date }> = [];
+  if (!ev.isRecurring()) {
+    const start = ev.startDate.toJSDate();
+    const end = ev.endDate.toJSDate();
+    if (start < rangeEnd && end > rangeStart) results.push({ start, end });
+    return results;
+  }
+  const iter = ev.iterator();
+  let next: ICAL.Time | null;
+  let limit = 500;
+  while ((next = iter.next()) && limit-- > 0) {
+    const start = next.toJSDate();
+    if (start >= rangeEnd) break;
+    const details = ev.getOccurrenceDetails(next);
+    const end = details.endDate.toJSDate();
+    if (end > rangeStart) results.push({ start, end });
+  }
+  return results;
+}
+
 export async function fetchTodayEvents(dateStr?: string): Promise<CalendarEvent[]> {
   const client = await makeDAVClient();
   const date = dateStr ? parseISO(dateStr) : new Date();
@@ -62,14 +83,16 @@ export async function fetchTodayEvents(dateStr?: string): Promise<CalendarEvent[
 
         for (const vevent of vevents) {
           const ev = new ICAL.Event(vevent);
-          events.push({
-            uid: ev.uid,
-            title: ev.summary,
-            startTime: ev.startDate.toJSDate(),
-            endTime: ev.endDate.toJSDate(),
-            calendarName: calName,
-            isAllDay: ev.startDate.isDate,
-          });
+          for (const { start, end } of expandEvent(ev, rangeStart, rangeEnd)) {
+            events.push({
+              uid: ev.uid,
+              title: ev.summary,
+              startTime: start,
+              endTime: end,
+              calendarName: calName,
+              isAllDay: ev.startDate.isDate,
+            });
+          }
         }
       } catch {
         // malformed iCal — skip

@@ -20,8 +20,13 @@ router.post('/generate', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Notion database ID not configured' });
     }
 
+    const overrideTasks = req.body.tasks as any[] | undefined;
+    const overrideChores = req.body.chores as any[] | undefined;
+
     const [notionData, existingEvents] = await Promise.all([
-      fetchTodayPage(dbId, config.notionDateProperty, date),
+      overrideTasks !== undefined || overrideChores !== undefined
+        ? Promise.resolve({ tasks: overrideTasks || [], chores: overrideChores || [], partitionAssignments: {} })
+        : fetchTodayPage(dbId, config.notionDateProperty, date),
       fetchTodayEvents(date),
     ]);
 

@@ -27,9 +27,26 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+async function getMongoUri(): Promise<string> {
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/flowtyme';
+  try {
+    await mongoose.connect(uri, { serverSelectionTimeoutMS: 3000 });
+    return uri;
+  } catch {
+    mongoose.connection.close().catch(() => {});
+    const { MongoMemoryServer } = await import('mongodb-memory-server');
+    const memServer = await MongoMemoryServer.create();
+    console.warn('MongoDB not found — using in-memory server (data resets on restart)');
+    return memServer.getUri();
+  }
+}
+
 async function start() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/flowtyme');
+    const uri = await getMongoUri();
+    if (mongoose.connection.readyState !== 1) {
+      await mongoose.connect(uri);
+    }
     console.log('MongoDB connected');
     app.listen(PORT, () => console.log(`Server running on :${PORT}`));
   } catch (err) {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { fetchNotionParsed, generateProposal } from '../api';
+import { clearProposalCache } from '../proposalCache';
 
 interface EditableTask {
   id: string;
@@ -100,6 +101,7 @@ export default function Dashboard() {
           preferredStartTime: c.preferredStartTime,
         }))
       );
+      clearProposalCache(date);
       localStorage.setItem('proposalId', data.proposalId);
       localStorage.setItem('proposalDate', date);
       navigate('/proposals');

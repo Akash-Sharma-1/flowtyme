@@ -10,6 +10,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { getProposal, updateProposalItems, fetchCalendarEvents, getConfig } from '../api';
 import type { ProposalItem, CalendarEvent, AppConfig } from '../types';
+import { getProposalCache, setProposalCache, updateCachedItems } from '../proposalCache';
 import { useNavigate } from 'react-router-dom';
 
 const locales = { 'en-US': enUS };
@@ -26,10 +27,10 @@ interface CalEvent extends RBCEvent {
 
 // partition name → background color for the day-view bands
 const PARTITION_BG: Record<string, string> = {
-  morning:   'rgba(99,102,241,0.07)',
-  afternoon: 'rgba(245,158,11,0.07)',
-  evening:   'rgba(249,115,22,0.08)',
-  night:     'rgba(139,92,246,0.09)',
+  morning:   'rgba(99,102,241,0.13)',
+  afternoon: 'rgba(245,158,11,0.11)',
+  evening:   'rgba(249,115,22,0.13)',
+  night:     'rgba(139,92,246,0.15)',
 };
 
 const PARTITION_LABEL_COLOR: Record<string, string> = {
@@ -48,6 +49,9 @@ const CALENDAR_COLORS: Record<string, string> = {
   'Fitness and Meals': '#4ade80',
   'Reminders':      '#a78bfa',
 };
+
+const TASK_COLOR  = '#ef4444'; // bright red for proposed tasks
+const CHORE_COLOR = '#3b82f6'; // bright blue for proposed chores
 
 function colorFor(calendarName: string): string {
   return CALENDAR_COLORS[calendarName] || '#8888aa';
@@ -82,11 +86,20 @@ export default function Proposals() {
     async function load() {
       setLoading(true);
       try {
+        const cached = getProposalCache(date);
+        if (cached) {
+          setProposalId(cached.proposalId);
+          setItems(cached.items);
+          setExistingEvents(cached.existingEvents);
+          setConfig(cached.config);
+          return;
+        }
         const [proposal, events, cfg] = await Promise.all([
           getProposal(date),
           fetchCalendarEvents(date),
           getConfig(),
         ]);
+        setProposalCache(date, { proposalId: proposal._id, items: proposal.items, existingEvents: events, config: cfg });
         setProposalId(proposal._id);
         setItems(proposal.items);
         setExistingEvents(events);
@@ -114,9 +127,10 @@ export default function Proposals() {
       calendarName: e.calendarName,
     }));
 
-  const taskCalEvents: CalEvent[] = [
+  // Calendar always shows all items — tab only changes the sidebar list
+  const allProposalCalEvents: CalEvent[] = [
     ...existingCalEvents,
-    ...tasks.map(item => ({
+    ...items.map(item => ({
       id: item.id,
       title: item.title,
       start: new Date(item.startTime),
@@ -127,23 +141,9 @@ export default function Proposals() {
     })),
   ];
 
-  const choreCalEvents: CalEvent[] = [
-    ...existingCalEvents,
-    ...chores.map(item => ({
-      id: item.id,
-      title: item.title,
-      start: new Date(item.startTime),
-      end: new Date(item.endTime),
-      proposalItem: item,
-      hasConflict: item.hasConflict,
-      calendarName: item.calendarName,
-    })),
-  ];
-
-  const calEvents = activeTab === 'tasks' ? taskCalEvents : choreCalEvents;
   const sidebarItems = activeTab === 'tasks' ? tasks : chores;
 
-  // color the background of each 15-min time slot by which partition it falls in
+  // mark each 15-min slot with a colored left border to show which partition it's in
   const slotPropGetter = useCallback((slotDate: Date) => {
     if (!config) return {};
     const totalMins = slotDate.getHours() * 60 + slotDate.getMinutes();
@@ -151,8 +151,8 @@ export default function Proposals() {
       const [sh, sm] = p.startTime.split(':').map(Number);
       const [eh, em] = p.endTime.split(':').map(Number);
       if (totalMins >= sh * 60 + sm && totalMins < eh * 60 + em) {
-        const bg = PARTITION_BG[p.name];
-        return bg ? { style: { background: bg } } : {};
+        const borderColor = PARTITION_LABEL_COLOR[p.name];
+        return borderColor ? { style: { borderLeft: `4px solid ${borderColor}70` } } : {};
       }
     }
     return {};
@@ -162,34 +162,42 @@ export default function Proposals() {
     ({ event, start, end }: { event: object; start: Date | string; end: Date | string }) => {
       const ev = event as CalEvent;
       if (ev.isExisting) return;
-      setItems(prev =>
-        prev.map(item =>
+      setItems(prev => {
+        const next = prev.map(item =>
           item.id === ev.id
             ? { ...item, startTime: new Date(start).toISOString(), endTime: new Date(end).toISOString(), hasConflict: false }
             : item
-        )
-      );
+        );
+        updateCachedItems(date, next);
+        return next;
+      });
     },
-    []
+    [date]
   );
 
   const onEventResize = useCallback(
     ({ event, start, end }: { event: object; start: Date | string; end: Date | string }) => {
       const ev = event as CalEvent;
       if (ev.isExisting) return;
-      setItems(prev =>
-        prev.map(item =>
+      setItems(prev => {
+        const next = prev.map(item =>
           item.id === ev.id
             ? { ...item, startTime: new Date(start).toISOString(), endTime: new Date(end).toISOString() }
             : item
-        )
-      );
+        );
+        updateCachedItems(date, next);
+        return next;
+      });
     },
-    []
+    [date]
   );
 
   function toggleAccepted(id: string) {
-    setItems(prev => prev.map(item => item.id === id ? { ...item, accepted: !item.accepted } : item));
+    setItems(prev => {
+      const next = prev.map(item => item.id === id ? { ...item, accepted: !item.accepted } : item);
+      updateCachedItems(date, next);
+      return next;
+    });
   }
 
   async function handleSave() {
@@ -207,19 +215,26 @@ export default function Proposals() {
 
   const eventStyleGetter = (event: object) => {
     const ev = event as CalEvent;
-    const color = colorFor(ev.calendarName || '');
+    const calColor = colorFor(ev.calendarName || '');
     if (ev.isExisting) {
-      return { style: { background: `${color}20`, border: `1px solid ${color}55`, color: `${color}cc`, fontSize: '11px' } };
+      return {
+        className: 'existing-event',
+        style: { background: calColor, border: `1px solid ${calColor}cc`, color: '#fff', fontSize: '11px', fontWeight: 600 },
+      };
     }
     const item = ev.proposalItem;
     if (!item) return {};
     if (ev.hasConflict) {
-      return { style: { background: 'rgba(248,113,113,0.15)', border: '1px solid #f87171', color: '#f87171' } };
+      return { style: { background: 'rgba(248,113,113,0.2)', border: '1px solid #ef4444', color: '#ef4444' } };
     }
+    const typeColor = item.type === 'task' ? TASK_COLOR : CHORE_COLOR;
     if (!item.accepted) {
-      return { style: { background: 'rgba(136,136,170,0.08)', border: '1px solid #333', color: '#555' } };
+      return { style: { background: `${typeColor}10`, border: `1px solid ${typeColor}30`, color: `${typeColor}55` } };
     }
-    return { style: { background: `${color}22`, border: `1px solid ${color}`, color } };
+    return {
+      className: 'proposed-accepted',
+      style: { background: `${typeColor}22`, border: `1px solid ${typeColor}`, color: typeColor, fontWeight: 500 },
+    };
   };
 
   const conflicts = items.filter(i => i.hasConflict);
@@ -247,7 +262,15 @@ export default function Proposals() {
               <span className="text-[var(--color-muted)]">{p.startTime}–{p.endTime}</span>
             </span>
           ))}
-          <span className="ml-auto flex gap-3">
+          <span className="ml-auto flex items-center gap-4">
+            <span className="flex items-center gap-1.5 text-xs text-[var(--color-muted)]">
+              <span className="w-3 h-3 rounded-sm" style={{ background: 'var(--color-accent)' }} />
+              existing
+            </span>
+            <span className="flex items-center gap-1.5 text-xs text-[var(--color-muted)] proposed-accepted-demo">
+              <span className="w-3 h-3 rounded-sm border" style={{ background: '#7c6af728', borderColor: '#7c6af7aa' }} />
+              proposed
+            </span>
             {Object.entries(CALENDAR_COLORS).map(([cal, color]) => (
               <span key={cal} className="flex items-center gap-1 text-xs text-[var(--color-muted)]">
                 <span className="w-2 h-2 rounded-full" style={{ background: color }} />
@@ -268,10 +291,9 @@ export default function Proposals() {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`flex-1 text-xs py-1.5 rounded-md font-medium transition-colors capitalize ${
-                  activeTab === tab
-                    ? 'bg-[var(--color-accent)] text-white'
-                    : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
+                  activeTab === tab ? 'text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
                 }`}
+                style={activeTab === tab ? { background: tab === 'tasks' ? 'var(--color-accent)' : '#f97316' } : {}}
               >
                 {tab} ({tab === 'tasks' ? tasks.length : chores.length})
               </button>
@@ -291,12 +313,18 @@ export default function Proposals() {
             </div>
           )}
 
-          <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-3 flex-1 overflow-y-auto">
+          <div
+            className="rounded-xl p-3 flex-1 overflow-y-auto"
+            style={{
+              background: 'linear-gradient(var(--color-surface), var(--color-surface)) padding-box, linear-gradient(135deg, var(--color-accent), #f97316) border-box',
+              border: '1px solid transparent',
+            }}
+          >
             <p className="text-xs text-[var(--color-muted)] uppercase tracking-wide mb-2 font-semibold">
               {activeTab === 'tasks' ? 'Tasks' : 'Chores'}
             </p>
             {sidebarItems.map(item => {
-              const color = colorFor(item.calendarName);
+              const color = item.type === 'task' ? TASK_COLOR : CHORE_COLOR;
               const partition = config ? partitionFor(item.startTime, config.partitions) : null;
               return (
                 <button
@@ -308,7 +336,10 @@ export default function Proposals() {
                       : 'bg-transparent text-[var(--color-muted)] line-through'
                   } ${item.hasConflict ? 'border border-[var(--color-error)]' : ''}`}
                 >
-                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+                  <span
+                    className="w-1 flex-shrink-0 self-stretch rounded-full"
+                    style={{ background: color, minHeight: '16px' }}
+                  />
                   <span className="flex-1 truncate">{item.title}</span>
                   {partition && (
                     <span
@@ -342,15 +373,16 @@ export default function Proposals() {
         <div className="flex-1 min-w-0">
           <DnDCalendar
             localizer={localizer}
-            events={calEvents}
+            events={allProposalCalEvents}
             defaultView="day"
             views={['day']}
             date={new Date(date)}
             onNavigate={() => {}}
             step={15}
             timeslots={4}
-            min={new Date(`${date}T06:00:00`)}
-            max={new Date(`${date}T23:00:00`)}
+            min={new Date(`${date}T00:00:00`)}
+            max={new Date(`${date}T23:59:00`)}
+            scrollToTime={new Date(`${date}T06:00:00`)}
             onEventDrop={onEventDrop as any}
             onEventResize={onEventResize as any}
             resizable

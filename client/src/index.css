@@ -29,14 +29,14 @@ body {
 
 /* react-big-calendar overrides */
 .rbc-calendar {
-  background: var(--color-surface);
+  background: #ffffff;
   border-radius: 0.75rem;
-  color: var(--color-text);
+  color: #1a1a2e;
 }
 .rbc-header {
-  background: var(--color-bg);
-  border-color: var(--color-border) !important;
-  color: var(--color-muted);
+  background: #f7f7ff;
+  border-color: #e5e5f0 !important;
+  color: #7777aa;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -44,20 +44,21 @@ body {
 }
 .rbc-time-view,
 .rbc-time-content {
-  border-color: var(--color-border) !important;
+  border-color: #e5e5f0 !important;
 }
-.rbc-time-slot { border-color: var(--color-border) !important; }
+.rbc-time-slot { border-color: #e5e5f0 !important; }
 .rbc-day-slot .rbc-time-slot { border-color: transparent !important; }
 .rbc-timeslot-group {
-  border-color: var(--color-border) !important;
-  min-height: 48px;
+  border-color: #e5e5f0 !important;
+  min-height: 200px;
 }
 .rbc-time-gutter .rbc-timeslot-group {
-  border-right: 1px solid var(--color-border);
+  border-right: 1px solid #e5e5f0;
 }
 .rbc-time-gutter .rbc-label {
-  color: var(--color-muted);
-  font-size: 0.72rem;
+  color: #9999bb;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
 }
 .rbc-current-time-indicator {
   background: var(--color-accent);
@@ -66,11 +67,20 @@ body {
 .rbc-event {
   border-radius: 6px !important;
   border: none !important;
-  font-size: 0.78rem;
-  padding: 2px 6px;
+  font-size: 0.8rem;
+  padding: 4px 8px;
 }
 .rbc-event.conflict {
-  background: rgba(248, 113, 113, 0.25) !important;
-  border: 1px solid var(--color-error) !important;
+  background: rgba(239, 68, 68, 0.2) !important;
+  border: 1px solid #ef4444 !important;
 }
-.rbc-today { background: rgba(124, 106, 247, 0.05) !important; }
+.rbc-today { background: rgba(124, 106, 247, 0.04) !important; }
+.rbc-event.existing-event { font-weight: 600; letter-spacing: 0.01em; }
+
+@keyframes timebox-glow {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50%       { box-shadow: 0 0 12px 3px currentColor; }
+}
+.rbc-event.proposed-accepted {
+  animation: timebox-glow 2.8s ease-in-out infinite;
+}

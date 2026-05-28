@@ -1,16 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #0f0f13;
-  --color-surface: #1a1a24;
-  --color-border: #2a2a38;
+  /* Light theme (default) */
+  --color-bg: #f7f7fb;
+  --color-surface: #ffffff;
+  --color-border: #e6e6f2;
   --color-accent: #7c6af7;
   --color-accent-dim: #4d3fc7;
-  --color-text: #e8e8f0;
-  --color-muted: #8888aa;
+  --color-text: #141423;
+  --color-muted: #6b6b8a;
   --color-success: #4ade80;
   --color-warning: #fbbf24;
   --color-error: #f87171;
+
+  /* react-big-calendar */
+  --rbc-bg: var(--color-surface);
+  --rbc-text: var(--color-text);
+  --rbc-header-bg: #f3f3fb;
+  --rbc-border: var(--color-border);
+  --rbc-gutter-text: #7a7aa0;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0f0f13;
+  --color-surface: #1a1a24;
+  --color-border: #2a2a38;
+  --color-text: #e8e8f0;
+  --color-muted: #8888aa;
+
+  --rbc-bg: #14141c;
+  --rbc-text: #e8e8f0;
+  --rbc-header-bg: #191923;
+  --rbc-border: #2a2a38;
+  --rbc-gutter-text: #9a9ab8;
 }
 
 * { box-sizing: border-box; }
@@ -29,14 +51,14 @@ body {
 
 /* react-big-calendar overrides */
 .rbc-calendar {
-  background: #ffffff;
+  background: var(--rbc-bg);
   border-radius: 0.75rem;
-  color: #1a1a2e;
+  color: var(--rbc-text);
 }
 .rbc-header {
-  background: #f7f7ff;
-  border-color: #e5e5f0 !important;
-  color: #7777aa;
+  background: var(--rbc-header-bg);
+  border-color: var(--rbc-border) !important;
+  color: var(--color-muted);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -44,19 +66,19 @@ body {
 }
 .rbc-time-view,
 .rbc-time-content {
-  border-color: #e5e5f0 !important;
+  border-color: var(--rbc-border) !important;
 }
-.rbc-time-slot { border-color: #e5e5f0 !important; }
+.rbc-time-slot { border-color: var(--rbc-border) !important; }
 .rbc-day-slot .rbc-time-slot { border-color: transparent !important; }
 .rbc-timeslot-group {
-  border-color: #e5e5f0 !important;
+  border-color: var(--rbc-border) !important;
   min-height: 60px !important;
 }
 .rbc-time-gutter .rbc-timeslot-group {
-  border-right: 1px solid #e5e5f0;
+  border-right: 1px solid var(--rbc-border);
 }
 .rbc-time-gutter .rbc-label {
-  color: #9999bb;
+  color: var(--rbc-gutter-text);
   font-size: 0.68rem;
   letter-spacing: 0.02em;
 }

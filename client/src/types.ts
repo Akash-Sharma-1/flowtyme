@@ -27,6 +27,8 @@ export interface Proposal {
   date: string;
   items: ProposalItem[];
   status: 'draft' | 'pushed';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CategoryMapping {

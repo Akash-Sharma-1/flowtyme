@@ -263,21 +263,27 @@ export default function Proposals() {
     if (ev.isExisting) {
       return {
         className: 'existing-event',
-        style: { background: calColor, border: `1px solid ${calColor}cc`, color: '#fff', fontSize: '11px', fontWeight: 600 },
+        style: { background: calColor, color: '#fff', fontSize: '11px', fontWeight: 600 },
       };
     }
     const item = ev.proposalItem;
     if (!item) return {};
     if (ev.hasConflict) {
-      return { style: { background: 'rgba(248,113,113,0.2)', border: '1px solid #ef4444', color: '#ef4444' } };
+      return { className: 'proposed-conflict', style: { background: 'rgba(239,68,68,0.18)', color: '#fca5a5' } };
     }
     const typeColor = item.type === 'task' ? TASK_COLOR : CHORE_COLOR;
+    const rgb       = item.type === 'task' ? '239,68,68' : '59,130,246';
     if (!item.accepted) {
-      return { style: { background: `${typeColor}10`, border: `1px solid ${typeColor}30`, color: `${typeColor}55` } };
+      return { style: { background: 'transparent', color: `${typeColor}55`, opacity: 0.45 } };
     }
     return {
       className: 'proposed-accepted',
-      style: { background: `${typeColor}22`, border: `1px solid ${typeColor}`, color: typeColor, fontWeight: 500 },
+      style: {
+        background: `repeating-linear-gradient(-50deg, rgba(${rgb},0.28) 0px, rgba(${rgb},0.28) 2px, rgba(${rgb},0.06) 2px, rgba(${rgb},0.06) 6px)`,
+        boxShadow: `inset 3px 0 0 ${typeColor}`,
+        color: typeColor,
+        fontWeight: 700,
+      },
     };
   };
 
@@ -287,10 +293,10 @@ export default function Proposals() {
   if (error) return <ErrorBox msg={error} />;
 
   return (
-    <div className="flex flex-col gap-4 h-[calc(100vh-80px)]">
+    <div className="flex flex-col gap-4 flex-1 min-h-0">
       {/* partition legend */}
       {config && (
-        <div className="flex gap-3 items-center flex-wrap">
+        <div className="flex gap-3 items-center flex-wrap flex-shrink-0">
           {config.partitions.map(p => (
             <span key={p.name} className="flex items-center gap-1.5 text-xs">
               <span
@@ -327,7 +333,7 @@ export default function Proposals() {
 
       <div className="flex gap-6 flex-1 min-h-0">
         {/* sidebar */}
-        <div className="w-64 flex-shrink-0 flex flex-col gap-3 overflow-y-auto">
+        <div className="w-64 flex-shrink-0 flex flex-col gap-3 min-h-0 overflow-hidden">
           {/* tabs */}
           <div className="flex gap-1 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-1">
             {(['tasks', 'chores'] as const).map(tab => (
@@ -414,8 +420,9 @@ export default function Proposals() {
         </div>
 
         {/* calendar */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 min-h-0">
           <DnDCalendar
+            key={date}
             localizer={localizer}
             events={allProposalCalEvents}
             defaultView="day"
@@ -424,9 +431,9 @@ export default function Proposals() {
             onNavigate={() => {}}
             step={15}
             timeslots={4}
-            min={new Date(`${date}T00:00:00`)}
+            min={new Date(`${date}T05:00:00`)}
             max={new Date(`${date}T23:59:00`)}
-            scrollToTime={new Date(`${date}T06:00:00`)}
+            scrollToTime={new Date(`${date}T05:00:00`)}
             onEventDrop={onEventDrop as any}
             onEventResize={onEventResize as any}
             resizable

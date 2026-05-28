@@ -1,5 +1,36 @@
 {
-  "categoryMappings": [],
+  "categoryMappings": [
+    {
+      "sourceCategory": "Office",
+      "calendarName": "Office Work",
+      "_id": "6a17e57489a470f0966bf523"
+    },
+    {
+      "sourceCategory": "Side Hustle",
+      "calendarName": "Side Hustle",
+      "_id": "6a17e57489a470f0966bf524"
+    },
+    {
+      "sourceCategory": "Prep",
+      "calendarName": "Prep Work",
+      "_id": "6a17e57489a470f0966bf525"
+    },
+    {
+      "sourceCategory": "💵 Finances",
+      "calendarName": "Side Hustle",
+      "_id": "6a17e57489a470f0966bf526"
+    },
+    {
+      "sourceCategory": "😇 Personal Well Being and Personality",
+      "calendarName": "Reminders",
+      "_id": "6a17e57489a470f0966bf527"
+    },
+    {
+      "sourceCategory": "🥗 Health",
+      "calendarName": "Fitness and Meals",
+      "_id": "6a17e57489a470f0966bf528"
+    }
+  ],
   "partitions": [
     {
       "name": "morning",
@@ -28,7 +59,5 @@
   ],
   "durationOverrides": [],
   "defaultTaskDurationMinutes": 60,
-  "defaultChoreDurationMinutes": 15,
-  "notionDatabaseId": "d2ef3b1dd85c4f2aa0536e7e865c874d",
-  "notionDateProperty": "Date"
+  "defaultChoreDurationMinutes": 15
 }

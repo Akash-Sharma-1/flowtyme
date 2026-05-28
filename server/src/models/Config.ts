@@ -51,6 +51,6 @@ const ConfigSchema = new Schema<IConfig>({
   ],
   defaultTaskDurationMinutes: { type: Number, default: 60 },
   defaultChoreDurationMinutes: { type: Number, default: 15 },
-});
+}, { timestamps: true });
 
 export default mongoose.model<IConfig>('Config', ConfigSchema);

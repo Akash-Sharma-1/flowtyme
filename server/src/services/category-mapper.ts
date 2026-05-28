@@ -2,18 +2,37 @@ import ConfigModel from '../models/Config';
 import { readConfigFile } from './config-file';
 
 export async function mapCategoryToCalendar(sourceCategory: string): Promise<string> {
-  const config = await ConfigModel.findOne();
-  if (!config) return sourceCategory;
+  const config = await getConfig();
+
+  const normalize = (s: string) =>
+    s
+      .normalize('NFC')
+      // strip emoji + variation selectors + common unicode “invisible” marks
+      .replace(/\p{Extended_Pictographic}/gu, '')
+      .replace(/[︀-️\u{E0100}-\u{E01EF}]/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
 
   const mapping = config.categoryMappings.find(
-    (m) => m.sourceCategory.toLowerCase() === sourceCategory.toLowerCase()
+    (m) => normalize(m.sourceCategory) === normalize(sourceCategory)
   );
 
-  return mapping?.calendarName || sourceCategory;
+  console.log(config.categoryMappings);
+  console.log(mapping);
+
+  if (!mapping?.calendarName) {
+    console.warn(`[category-mapper] No mapping for "${sourceCategory}". Available: ${config.categoryMappings.map(m => `"${m.sourceCategory}"`).join(', ')}`);
+    return sourceCategory;
+  }
+  console.log(`[category-mapper] mapping for "${sourceCategory}". Available: ${mapping.calendarName}`);
+
+  return mapping.calendarName;
 }
 
 export async function getConfig() {
-  let config = await ConfigModel.findOne();
+  // Sort by updatedAt desc so the most recently saved config wins when duplicates exist
+  let config = await ConfigModel.findOne().sort({ updatedAt: -1, _id: -1 });
   if (!config) {
     const fromFile = readConfigFile();
     config = await ConfigModel.create(fromFile || {

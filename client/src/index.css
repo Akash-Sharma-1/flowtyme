@@ -17,7 +17,7 @@
   --rbc-bg: var(--color-surface);
   --rbc-text: var(--color-text);
   --rbc-header-bg: #f3f3fb;
-  --rbc-border: var(--color-border);
+  --rbc-border: rgba(150,150,200,0.18);
   --rbc-gutter-text: #7a7aa0;
 }
 
@@ -31,7 +31,7 @@
   --rbc-bg: #14141c;
   --rbc-text: #e8e8f0;
   --rbc-header-bg: #191923;
-  --rbc-border: #2a2a38;
+  --rbc-border: rgba(255,255,255,0.06);
   --rbc-gutter-text: #9a9ab8;
 }
 
@@ -92,9 +92,9 @@ body {
   font-size: 0.8rem;
   padding: 4px 8px;
 }
-.rbc-event.conflict {
-  background: rgba(239, 68, 68, 0.2) !important;
-  border: 1px solid #ef4444 !important;
+.rbc-event.proposed-conflict {
+  outline: 1.5px dashed #ef4444 !important;
+  outline-offset: -2px;
 }
 .rbc-today { background: rgba(124, 106, 247, 0.04) !important; }
 .rbc-event.existing-event { font-weight: 600; letter-spacing: 0.01em; }
@@ -103,43 +103,10 @@ body {
 /* Partition bg applies only to time gutter, not event grid */
 .rbc-day-slot .rbc-time-slot { background: transparent !important; }
 
-/* ── Proposed-event flash animations ─────────────────────────────────────── */
-
-/* 1. Iridescent single-sweep shimmer — slow, one pass then long pause */
-@keyframes event-shimmer {
-  0%   { transform: translateX(-180%) skewX(-20deg); opacity: 0; }
-  5%   { opacity: 1; }
-  30%  { transform: translateX(420%)  skewX(-20deg); opacity: 0; }
-  100% { transform: translateX(420%)  skewX(-20deg); opacity: 0; }
-}
-
+/* Proposed events */
 .rbc-event.proposed-accepted {
-  overflow: hidden;
+  outline: none !important;
 }
-
-.rbc-event.proposed-accepted::after {
-  content: '';
-  position: absolute;
-  top: -20%; left: 0;
-  width: 38%; height: 140%;
-  background: linear-gradient(
-    to right,
-    transparent            0%,
-    rgba(124,106,247,0.35) 25%,
-    rgba(255,255,255,0.65) 50%,
-    rgba(96,165,250,0.35)  75%,
-    transparent            100%
-  );
-  animation: event-shimmer 6s ease-in-out infinite;
-  pointer-events: none;
-  mix-blend-mode: screen;
-}
-
-/* stagger — adjacent events don't flash in lockstep */
-.rbc-event.proposed-accepted:nth-child(2n)::after  { animation-delay: 0.5s; }
-.rbc-event.proposed-accepted:nth-child(3n)::after  { animation-delay: 1.0s; }
-.rbc-event.proposed-accepted:nth-child(4n)::after  { animation-delay: 1.5s; }
-.rbc-event.proposed-accepted:nth-child(5n)::after  { animation-delay: 0.8s; }
 
 /* Hide RBC's own time label — our EventComponent owns time display */
 .rbc-event-label {

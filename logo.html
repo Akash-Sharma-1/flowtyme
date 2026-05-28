@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowTyme — Brand Logo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:      #7c6af7;
+      --purple-bold: #863bff;
+      --purple-deep: #5b45e0;
+      --cyan:        #47bfff;
+      --dark-bg:     #0f0f13;
+      --dark-surface:#1a1a24;
+      --dark-border: #2a2a38;
+      --light-bg:    #f4f3ff;
+      --light-surface:#ffffff;
+      --text-dark:   #141423;
+      --muted:       #6b6b8a;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--dark-bg);
+      color: #e8e8f0;
+      padding: 0;
+    }
+
+    /* ─── HERO ─────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      position: relative;
+      overflow: hidden;
+      padding: 80px 40px;
+    }
+
+    .hero-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 50%, rgba(124,106,247,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 30% 60%, rgba(71,191,255,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-mark {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-wordmark {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .wm-main {
+      font-size: 64px;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .wm-flow {
+      font-weight: 200;
+      color: rgba(232, 232, 240, 0.85);
+      letter-spacing: -1px;
+    }
+
+    .wm-tyme {
+      font-weight: 800;
+      color: var(--purple);
+      letter-spacing: -3px;
+    }
+
+    .wm-tag {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ─── SECTIONS ──────────────────────────────────────── */
+    .section {
+      padding: 80px 60px;
+      border-top: 1px solid var(--dark-border);
+    }
+
+    .section-header {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 48px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 32px;
+    }
+
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      border-radius: 16px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      min-height: 200px;
+    }
+
+    .card-dark  { background: var(--dark-surface); border: 1px solid var(--dark-border); }
+    .card-deep  { background: #09090e; border: 1px solid #1a1a24; }
+    .card-light { background: var(--light-surface); border: 1px solid #e0dff8; }
+    .card-tinted{ background: var(--light-bg); border: 1px solid #d4d0f8; }
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .label-dark  { color: var(--muted); }
+    .label-light { color: #9997c4; }
+
+    /* ─── LOCKUP: HORIZONTAL ────────────────────────────── */
+    .lockup-h {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lockup-h-text .wm-main { font-size: 32px; letter-spacing: -1px; }
+    .lockup-h-text-sm .wm-main { font-size: 22px; letter-spacing: -0.5px; }
+    .lockup-h-text-xs .wm-main { font-size: 16px; letter-spacing: -0.3px; }
+
+    .wm-tyme-light {
+      font-weight: 800;
+      color: var(--purple-bold);
+      letter-spacing: -2px;
+    }
+
+    /* ─── SIZES ROW ──────────────────────────────────────── */
+    .sizes-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .size-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .size-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
+    /* ─── COLOR SWATCHES ─────────────────────────────────── */
+    .swatches {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .swatch-box {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .swatch-name { font-size: 11px; font-weight: 600; color: #e8e8f0; }
+    .swatch-hex  { font-size: 10px; font-weight: 400; color: var(--muted); font-family: 'SF Mono', 'Fira Code', monospace; }
+
+    /* ─── ICON GRID ──────────────────────────────────────── */
+    .icon-sizes {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      background: var(--dark-surface);
+      padding: 32px;
+      border-radius: 16px;
+      border: 1px solid var(--dark-border);
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .section { padding: 48px 24px; }
+      .hero { padding: 60px 24px; }
+      .wm-main { font-size: 48px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+
+  <!-- The mark: full polished version -->
+  <div class="hero-mark" style="position:relative; width:148px; height:148px;">
+    <!-- Holographic bolt — centered inside ring -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="112" height="107" fill="none" viewBox="0 0 48 46"
+      style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+      <defs>
+        <filter id="h-b" width="60.045" height="41.654" x="-19.77" y="16.149" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+        <filter id="h-c" width="90.34" height="51.437" x="-54.613" y="-7.533" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+        <filter id="h-g" width="74.749" height="58.852" x="15.756" y="-17.901" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+        <filter id="h-k" width="54.814" height="64.646" x="20.116" y="-38.415" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+        <filter id="h-l" width="33.541" height="35.313" x="24.641" y="-11.323" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+        <filter id="h-p" width="39.409" height="43.623" x="18.713" y="10.588" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+        <mask id="h-a" width="48" height="46" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+          <path fill="#000" d="M25.842 44.938c-.664.844-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.183c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.498 0-3.579-1.842-3.579H1.133c-.92 0-1.456-1.04-.92-1.787L9.91.473c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.578 1.842 3.578h11.377c.943 0 1.473 1.088.89 1.832L25.843 44.94z"/>
+        </mask>
+      </defs>
+      <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+      <g mask="url(#h-a)">
+        <g filter="url(#h-b)"><ellipse cx="5.508" cy="14.704" fill="#ede6ff" rx="5.508" ry="14.704" transform="matrix(.00324 1 1 -.00324 -4.47 31.516)"/></g>
+        <g filter="url(#h-c)"><ellipse cx="10.399" cy="29.851" fill="#ede6ff" rx="10.399" ry="29.851" transform="matrix(.00324 1 1 -.00324 -39.328 7.883)"/></g>
+        <g filter="url(#h-g)"><ellipse cx="14.072" cy="22.078" fill="#ede6ff" rx="14.072" ry="22.078" transform="rotate(93.35 24.506 48.493)scale(-1 1)"/></g>
+        <g filter="url(#h-k)"><ellipse cx="47.523" cy="-6.092" fill="#7e14ff" rx="4.407" ry="29.108" transform="rotate(37.892 47.523 -6.092)"/></g>
+        <g filter="url(#h-l)"><ellipse cx="41.412" cy="6.333" fill="#47bfff" rx="5.971" ry="9.665" transform="rotate(37.892 41.412 6.333)"/></g>
+        <g filter="url(#h-p)"><ellipse cx="38.418" cy="32.4" fill="#47bfff" rx="5.971" ry="15.297" transform="rotate(37.892 38.418 32.4)"/></g>
+      </g>
+    </svg>
+
+    <!-- Time ring — overlaid as separate transparent SVG, no ID conflicts -->
+    <svg viewBox="0 0 148 148" width="148" height="148" fill="none"
+      style="position:absolute; top:0; left:0; pointer-events:none;">
+      <!-- Full-circle track (dim base) -->
+      <circle cx="74" cy="74" r="68"
+        stroke="rgba(255,255,255,0.1)" stroke-width="2" fill="none"/>
+
+      <!-- Cardinal tick marks (12/3/6/9) — centered on ring -->
+      <line x1="74" y1="3"   x2="74" y2="9"   stroke="rgba(255,255,255,0.45)" stroke-width="1.8"/>
+      <line x1="145" y1="74" x2="139" y2="74" stroke="rgba(255,255,255,0.45)" stroke-width="1.8"/>
+      <line x1="74" y1="145" x2="74" y2="139" stroke="rgba(255,255,255,0.45)" stroke-width="1.8"/>
+      <line x1="3"   y1="74" x2="9"   y2="74" stroke="rgba(255,255,255,0.45)" stroke-width="1.8"/>
+
+      <!-- Diagonal ticks (45° / 135° / 225° / 315°) — shorter, dimmer -->
+      <!-- 45°: (74+68×0.707, 74−68×0.707) = (122.1, 25.9) -->
+      <line x1="124.9" y1="23.1" x2="119.3" y2="28.7" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+      <!-- 135°: (122.1, 122.1) -->
+      <line x1="124.9" y1="124.9" x2="119.3" y2="119.3" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+      <!-- 225°: (25.9, 122.1) -->
+      <line x1="23.1" y1="124.9" x2="28.7" y2="119.3" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+      <!-- 315°: (25.9, 25.9) -->
+      <line x1="23.1" y1="23.1" x2="28.7" y2="28.7" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+
+      <!-- Progress arc: 75% clockwise from 12 o'clock (ends at 9 o'clock) -->
+      <!-- r=68, C=2π×68=427.26; 75%=320.45, gap=106.81 -->
+      <circle cx="74" cy="74" r="68"
+        stroke="#7c6af7"
+        stroke-width="3"
+        fill="none"
+        stroke-dasharray="320.45 427.26"
+        stroke-linecap="round"
+        transform="rotate(-90 74 74)"
+        opacity="0.65"/>
+    </svg>
+  </div>
+
+  <div class="hero-wordmark">
+    <div class="wm-main">
+      <span class="wm-flow">Flow</span><span class="wm-tyme">Tyme</span>
+    </div>
+    <div class="wm-tag">Time Boxing Assistant</div>
+  </div>
+
+  <div class="hero-scroll">↓ &nbsp; Brand System</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     HORIZONTAL LOCKUPS
+═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header">Horizontal lockup — dark backgrounds</div>
+  <div class="grid grid-2" style="gap:24px;">
+
+    <!-- Large on dark surface -->
+    <div class="card card-dark">
+      <div class="lockup-h" style="align-items:center; gap:16px;">
+        <!-- Mark: polished, full size -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="50" fill="none" viewBox="0 0 48 46">
+          <defs>
+            <filter id="lh1-b" width="60.045" height="41.654" x="-19.77" y="16.149" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="lh1-c" width="90.34" height="51.437" x="-54.613" y="-7.533" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="lh1-d" width="79.355" height="29.4" x="-49.64" y="2.03" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="lh1-e" width="79.579" height="29.4" x="-45.045" y="20.029" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="lh1-f" width="79.579" height="29.4" x="-43.513" y="21.178" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="lh1-g" width="74.749" height="58.852" x="15.756" y="-17.901" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="lh1-j" width="56.045" height="63.649" x="-27.636" y="-22.853" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="lh1-k" width="54.814" height="64.646" x="20.116" y="-38.415" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="lh1-l" width="33.541" height="35.313" x="24.641" y="-11.323" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="lh1-o" width="54.814" height="64.646" x="8.244" y="-2.416" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="lh1-p" width="39.409" height="43.623" x="18.713" y="10.588" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <mask id="lh1-a" width="48" height="46" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+              <path fill="#000" d="M25.842 44.938c-.664.844-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.183c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.498 0-3.579-1.842-3.579H1.133c-.92 0-1.456-1.04-.92-1.787L9.91.473c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.578 1.842 3.578h11.377c.943 0 1.473 1.088.89 1.832L25.843 44.94z"/>
+            </mask>
+          </defs>
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+          <g mask="url(#lh1-a)">
+            <g filter="url(#lh1-b)"><ellipse cx="5.508" cy="14.704" fill="#ede6ff" rx="5.508" ry="14.704" transform="matrix(.00324 1 1 -.00324 -4.47 31.516)"/></g>
+            <g filter="url(#lh1-c)"><ellipse cx="10.399" cy="29.851" fill="#ede6ff" rx="10.399" ry="29.851" transform="matrix(.00324 1 1 -.00324 -39.328 7.883)"/></g>
+            <g filter="url(#lh1-d)"><ellipse cx="5.508" cy="30.487" fill="#7e14ff" rx="5.508" ry="30.487" transform="rotate(89.814 -25.913 -14.639)scale(1 -1)"/></g>
+            <g filter="url(#lh1-e)"><ellipse cx="5.508" cy="30.599" fill="#7e14ff" rx="5.508" ry="30.599" transform="rotate(89.814 -32.644 -3.334)scale(1 -1)"/></g>
+            <g filter="url(#lh1-f)"><ellipse cx="5.508" cy="30.599" fill="#7e14ff" rx="5.508" ry="30.599" transform="matrix(.00324 1 1 -.00324 -34.34 30.47)"/></g>
+            <g filter="url(#lh1-g)"><ellipse cx="14.072" cy="22.078" fill="#ede6ff" rx="14.072" ry="22.078" transform="rotate(93.35 24.506 48.493)scale(-1 1)"/></g>
+            <g filter="url(#lh1-j)"><ellipse cx=".387" cy="8.972" fill="#7e14ff" rx="4.407" ry="29.108" transform="rotate(39.51 .387 8.972)"/></g>
+            <g filter="url(#lh1-k)"><ellipse cx="47.523" cy="-6.092" fill="#7e14ff" rx="4.407" ry="29.108" transform="rotate(37.892 47.523 -6.092)"/></g>
+            <g filter="url(#lh1-l)"><ellipse cx="41.412" cy="6.333" fill="#47bfff" rx="5.971" ry="9.665" transform="rotate(37.892 41.412 6.333)"/></g>
+            <g filter="url(#lh1-o)"><ellipse cx="35.651" cy="29.907" fill="#7e14ff" rx="4.407" ry="29.108" transform="rotate(37.892 35.651 29.907)"/></g>
+            <g filter="url(#lh1-p)"><ellipse cx="38.418" cy="32.4" fill="#47bfff" rx="5.971" ry="15.297" transform="rotate(37.892 38.418 32.4)"/></g>
+          </g>
+        </svg>
+        <div class="lockup-h-text">
+          <div class="wm-main">
+            <span class="wm-flow">Flow</span><span class="wm-tyme">Tyme</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-label label-dark">Dark surface · primary</div>
+    </div>
+
+    <!-- Deep dark -->
+    <div class="card card-deep">
+      <div class="lockup-h" style="align-items:center; gap:14px;">
+        <!-- Simple solid mark for small sizes -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="36" fill="none" viewBox="0 0 48 46">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <div class="lockup-h-text-sm">
+          <div class="wm-main">
+            <span class="wm-flow" style="color:rgba(232,232,240,0.6)">Flow</span><span class="wm-tyme">Tyme</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-label label-dark">Deep dark · solid mark</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     LIGHT BACKGROUNDS
+═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header">Light backgrounds</div>
+  <div class="grid grid-2" style="gap:24px;">
+
+    <div class="card card-light">
+      <div class="lockup-h" style="align-items:center; gap:14px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="50" fill="none" viewBox="0 0 48 46">
+          <path fill="#6d28d9" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <div class="lockup-h-text">
+          <div class="wm-main">
+            <span style="font-weight:200; color:#4c1d95; letter-spacing:-1px;">Flow</span><span style="font-weight:800; color:#6d28d9; letter-spacing:-3px;">Tyme</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-label label-light">White surface · solid mark</div>
+    </div>
+
+    <div class="card card-tinted">
+      <div class="lockup-h" style="align-items:center; gap:14px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="46" height="44" fill="none" viewBox="0 0 48 46">
+          <path fill="#7c3aed" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <div class="lockup-h-text">
+          <div class="wm-main">
+            <span style="font-weight:200; color:#5b21b6; letter-spacing:-1px;">Flow</span><span style="font-weight:800; color:#7c3aed; letter-spacing:-3px;">Tyme</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-label label-light">Tinted background</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     ICON SIZES
+═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header">Mark — icon sizes</div>
+  <div class="card card-dark" style="flex-direction:row; flex-wrap:wrap; justify-content:flex-start; padding:40px; gap:0; min-height:auto;">
+    <div class="sizes-row" style="width:100%;">
+
+      <div class="size-item">
+        <!-- 128px — full holographic -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="122" fill="none" viewBox="0 0 48 46">
+          <defs>
+            <filter id="s128-b" width="60.045" height="41.654" x="-19.77" y="16.149" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="s128-c" width="90.34" height="51.437" x="-54.613" y="-7.533" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="s128-g" width="74.749" height="58.852" x="15.756" y="-17.901" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="s128-k" width="54.814" height="64.646" x="20.116" y="-38.415" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="s128-l" width="33.541" height="35.313" x="24.641" y="-11.323" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="s128-p" width="39.409" height="43.623" x="18.713" y="10.588" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <mask id="s128-a" width="48" height="46" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+              <path fill="#000" d="M25.842 44.938c-.664.844-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.183c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.498 0-3.579-1.842-3.579H1.133c-.92 0-1.456-1.04-.92-1.787L9.91.473c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.578 1.842 3.578h11.377c.943 0 1.473 1.088.89 1.832L25.843 44.94z"/>
+            </mask>
+          </defs>
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+          <g mask="url(#s128-a)">
+            <g filter="url(#s128-b)"><ellipse cx="5.508" cy="14.704" fill="#ede6ff" rx="5.508" ry="14.704" transform="matrix(.00324 1 1 -.00324 -4.47 31.516)"/></g>
+            <g filter="url(#s128-c)"><ellipse cx="10.399" cy="29.851" fill="#ede6ff" rx="10.399" ry="29.851" transform="matrix(.00324 1 1 -.00324 -39.328 7.883)"/></g>
+            <g filter="url(#s128-g)"><ellipse cx="14.072" cy="22.078" fill="#ede6ff" rx="14.072" ry="22.078" transform="rotate(93.35 24.506 48.493)scale(-1 1)"/></g>
+            <g filter="url(#s128-k)"><ellipse cx="47.523" cy="-6.092" fill="#7e14ff" rx="4.407" ry="29.108" transform="rotate(37.892 47.523 -6.092)"/></g>
+            <g filter="url(#s128-l)"><ellipse cx="41.412" cy="6.333" fill="#47bfff" rx="5.971" ry="9.665" transform="rotate(37.892 41.412 6.333)"/></g>
+            <g filter="url(#s128-p)"><ellipse cx="38.418" cy="32.4" fill="#47bfff" rx="5.971" ry="15.297" transform="rotate(37.892 38.418 32.4)"/></g>
+          </g>
+        </svg>
+        <span class="size-label">128px</span>
+      </div>
+
+      <div class="size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="61" fill="none" viewBox="0 0 48 46">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <span class="size-label">64px · solid</span>
+      </div>
+
+      <div class="size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="31" fill="none" viewBox="0 0 48 46">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <span class="size-label">32px</span>
+      </div>
+
+      <div class="size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="23" fill="none" viewBox="0 0 48 46">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <span class="size-label">24px</span>
+      </div>
+
+      <div class="size-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" fill="none" viewBox="0 0 48 46">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <span class="size-label">16px</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     WORDMARK WEIGHTS — TYPOGRAPHY SYSTEM
+═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header">Wordmark — type weights</div>
+  <div class="card card-dark" style="align-items:flex-start; gap:32px; min-height:auto;">
+
+    <!-- Primary: 200 / 800 -->
+    <div>
+      <span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:200; color:rgba(232,232,240,0.7); letter-spacing:-1px;">Flow</span><span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:800; color:#7c6af7; letter-spacing:-3px;">Tyme</span>
+      <span style="font-size:11px; color:var(--muted); margin-left:20px; letter-spacing:2px;">200 / 800 — primary</span>
+    </div>
+
+    <!-- Alt: 300 / 700 -->
+    <div>
+      <span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:300; color:rgba(232,232,240,0.75); letter-spacing:-1px;">Flow</span><span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:700; color:#7c6af7; letter-spacing:-3px;">Tyme</span>
+      <span style="font-size:11px; color:var(--muted); margin-left:20px; letter-spacing:2px;">300 / 700 — alternate</span>
+    </div>
+
+    <!-- Purple-only: 200 / 800 all purple -->
+    <div>
+      <span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:200; color:#a78bfa; letter-spacing:-1px;">Flow</span><span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:800; color:#863bff; letter-spacing:-3px;">Tyme</span>
+      <span style="font-size:11px; color:var(--muted); margin-left:20px; letter-spacing:2px;">all-purple variant</span>
+    </div>
+
+    <!-- White / cyan -->
+    <div>
+      <span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:200; color:rgba(255,255,255,0.9); letter-spacing:-1px;">Flow</span><span style="font-family:'Inter',sans-serif; font-size:52px; font-weight:800; color:#47bfff; letter-spacing:-3px;">Tyme</span>
+      <span style="font-size:11px; color:var(--muted); margin-left:20px; letter-spacing:2px;">white + cyan accent</span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     APP ICON — bolt + time ring
+═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header">App icon — bolt + time ring</div>
+  <p style="color:#6b6b8a; font-size:12px; letter-spacing:0.5px; margin-bottom:36px; max-width:480px;">
+    Progress ring around the bolt = time boxing at a glance. Arc = 75% of day planned. At 32px fall back to bolt only.
+  </p>
+  <div style="display:flex; gap:40px; flex-wrap:wrap; align-items:flex-end;">
+
+    <!-- 192px -->
+    <div class="size-item">
+      <div style="position:relative; width:192px; height:192px; border-radius:42px; background:linear-gradient(145deg,#1c0933 0%,#06030e 100%); box-shadow:0 0 80px rgba(134,59,255,0.4), 0 0 160px rgba(71,191,255,0.08), inset 0 0 0 0.8px rgba(134,59,255,0.2); overflow:hidden;">
+        <!-- Holographic bolt, centered -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="96" fill="none" viewBox="0 0 48 46"
+          style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+          <defs>
+            <filter id="ai1-b" width="60.045" height="41.654" x="-19.77" y="16.149" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="ai1-c" width="90.34" height="51.437" x="-54.613" y="-7.533" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="ai1-g" width="74.749" height="58.852" x="15.756" y="-17.901" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="ai1-k" width="54.814" height="64.646" x="20.116" y="-38.415" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="ai1-l" width="33.541" height="35.313" x="24.641" y="-11.323" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="ai1-p" width="39.409" height="43.623" x="18.713" y="10.588" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <mask id="ai1-a" width="48" height="46" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+              <path fill="#000" d="M25.842 44.938c-.664.844-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.183c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.498 0-3.579-1.842-3.579H1.133c-.92 0-1.456-1.04-.92-1.787L9.91.473c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.578 1.842 3.578h11.377c.943 0 1.473 1.088.89 1.832L25.843 44.94z"/>
+            </mask>
+          </defs>
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+          <g mask="url(#ai1-a)">
+            <g filter="url(#ai1-b)"><ellipse cx="5.508" cy="14.704" fill="#ede6ff" rx="5.508" ry="14.704" transform="matrix(.00324 1 1 -.00324 -4.47 31.516)"/></g>
+            <g filter="url(#ai1-c)"><ellipse cx="10.399" cy="29.851" fill="#ede6ff" rx="10.399" ry="29.851" transform="matrix(.00324 1 1 -.00324 -39.328 7.883)"/></g>
+            <g filter="url(#ai1-g)"><ellipse cx="14.072" cy="22.078" fill="#ede6ff" rx="14.072" ry="22.078" transform="rotate(93.35 24.506 48.493)scale(-1 1)"/></g>
+            <g filter="url(#ai1-k)"><ellipse cx="47.523" cy="-6.092" fill="#7e14ff" rx="4.407" ry="29.108" transform="rotate(37.892 47.523 -6.092)"/></g>
+            <g filter="url(#ai1-l)"><ellipse cx="41.412" cy="6.333" fill="#47bfff" rx="5.971" ry="9.665" transform="rotate(37.892 41.412 6.333)"/></g>
+            <g filter="url(#ai1-p)"><ellipse cx="38.418" cy="32.4" fill="#47bfff" rx="5.971" ry="15.297" transform="rotate(37.892 38.418 32.4)"/></g>
+          </g>
+        </svg>
+        <!-- Time ring overlay — r=82, center=(96,96), C=515.22, 75%=386.42 -->
+        <svg viewBox="0 0 192 192" width="192" height="192" fill="none"
+          style="position:absolute; top:0; left:0; pointer-events:none;">
+          <circle cx="96" cy="96" r="82" stroke="rgba(255,255,255,0.08)" stroke-width="2" fill="none"/>
+          <!-- Cardinal ticks at 12 / 3 / 6 / 9 -->
+          <line x1="96" y1="14" x2="96" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.8"/>
+          <line x1="96" y1="14" x2="96" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" transform="rotate(90 96 96)"/>
+          <line x1="96" y1="14" x2="96" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" transform="rotate(180 96 96)"/>
+          <line x1="96" y1="14" x2="96" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" transform="rotate(270 96 96)"/>
+          <!-- Diagonal ticks at 45° / 135° / 225° / 315° -->
+          <line x1="96" y1="14" x2="96" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" transform="rotate(45 96 96)"/>
+          <line x1="96" y1="14" x2="96" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" transform="rotate(135 96 96)"/>
+          <line x1="96" y1="14" x2="96" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" transform="rotate(225 96 96)"/>
+          <line x1="96" y1="14" x2="96" y2="19" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" transform="rotate(315 96 96)"/>
+          <!-- 75% progress arc, starts at 12 o'clock -->
+          <circle cx="96" cy="96" r="82"
+            stroke="#7c6af7" stroke-width="3" fill="none"
+            stroke-dasharray="386.42 515.22" stroke-linecap="round"
+            transform="rotate(-90 96 96)" opacity="0.7"/>
+          <!-- Arc end-cap dot at 9 o'clock (75% = 270° from 12) -->
+          <circle cx="14" cy="96" r="3" fill="#7c6af7" opacity="0.8"/>
+        </svg>
+      </div>
+      <span class="size-label">192 · app icon</span>
+    </div>
+
+    <!-- 128px -->
+    <div class="size-item">
+      <div style="position:relative; width:128px; height:128px; border-radius:28px; background:linear-gradient(145deg,#1c0933 0%,#06030e 100%); box-shadow:0 0 40px rgba(134,59,255,0.35), inset 0 0 0 0.8px rgba(134,59,255,0.18); overflow:hidden;">
+        <!-- Holographic bolt, centered -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="66" height="63" fill="none" viewBox="0 0 48 46"
+          style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+          <defs>
+            <filter id="ai2-b" width="60.045" height="41.654" x="-19.77" y="16.149" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="ai2-c" width="90.34" height="51.437" x="-54.613" y="-7.533" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="ai2-g" width="74.749" height="58.852" x="15.756" y="-17.901" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="7.659"/></filter>
+            <filter id="ai2-k" width="54.814" height="64.646" x="20.116" y="-38.415" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="ai2-l" width="33.541" height="35.313" x="24.641" y="-11.323" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <filter id="ai2-p" width="39.409" height="43.623" x="18.713" y="10.588" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur result="effect1" stdDeviation="4.596"/></filter>
+            <mask id="ai2-a" width="48" height="46" x="0" y="0" maskUnits="userSpaceOnUse" style="mask-type:alpha">
+              <path fill="#000" d="M25.842 44.938c-.664.844-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.183c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.498 0-3.579-1.842-3.579H1.133c-.92 0-1.456-1.04-.92-1.787L9.91.473c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.578 1.842 3.578h11.377c.943 0 1.473 1.088.89 1.832L25.843 44.94z"/>
+            </mask>
+          </defs>
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+          <g mask="url(#ai2-a)">
+            <g filter="url(#ai2-b)"><ellipse cx="5.508" cy="14.704" fill="#ede6ff" rx="5.508" ry="14.704" transform="matrix(.00324 1 1 -.00324 -4.47 31.516)"/></g>
+            <g filter="url(#ai2-c)"><ellipse cx="10.399" cy="29.851" fill="#ede6ff" rx="10.399" ry="29.851" transform="matrix(.00324 1 1 -.00324 -39.328 7.883)"/></g>
+            <g filter="url(#ai2-g)"><ellipse cx="14.072" cy="22.078" fill="#ede6ff" rx="14.072" ry="22.078" transform="rotate(93.35 24.506 48.493)scale(-1 1)"/></g>
+            <g filter="url(#ai2-k)"><ellipse cx="47.523" cy="-6.092" fill="#7e14ff" rx="4.407" ry="29.108" transform="rotate(37.892 47.523 -6.092)"/></g>
+            <g filter="url(#ai2-l)"><ellipse cx="41.412" cy="6.333" fill="#47bfff" rx="5.971" ry="9.665" transform="rotate(37.892 41.412 6.333)"/></g>
+            <g filter="url(#ai2-p)"><ellipse cx="38.418" cy="32.4" fill="#47bfff" rx="5.971" ry="15.297" transform="rotate(37.892 38.418 32.4)"/></g>
+          </g>
+        </svg>
+        <!-- Time ring overlay — r=54, center=(64,64), C=339.29, 75%=254.47 -->
+        <svg viewBox="0 0 128 128" width="128" height="128" fill="none"
+          style="position:absolute; top:0; left:0; pointer-events:none;">
+          <circle cx="64" cy="64" r="54" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" fill="none"/>
+          <line x1="64" y1="10" x2="64" y2="16" stroke="rgba(255,255,255,0.38)" stroke-width="1.5" transform="rotate(0 64 64)"/>
+          <line x1="64" y1="10" x2="64" y2="16" stroke="rgba(255,255,255,0.38)" stroke-width="1.5" transform="rotate(90 64 64)"/>
+          <line x1="64" y1="10" x2="64" y2="16" stroke="rgba(255,255,255,0.38)" stroke-width="1.5" transform="rotate(180 64 64)"/>
+          <line x1="64" y1="10" x2="64" y2="16" stroke="rgba(255,255,255,0.38)" stroke-width="1.5" transform="rotate(270 64 64)"/>
+          <line x1="64" y1="10" x2="64" y2="14" stroke="rgba(255,255,255,0.16)" stroke-width="1" transform="rotate(45 64 64)"/>
+          <line x1="64" y1="10" x2="64" y2="14" stroke="rgba(255,255,255,0.16)" stroke-width="1" transform="rotate(135 64 64)"/>
+          <line x1="64" y1="10" x2="64" y2="14" stroke="rgba(255,255,255,0.16)" stroke-width="1" transform="rotate(225 64 64)"/>
+          <line x1="64" y1="10" x2="64" y2="14" stroke="rgba(255,255,255,0.16)" stroke-width="1" transform="rotate(315 64 64)"/>
+          <circle cx="64" cy="64" r="54"
+            stroke="#7c6af7" stroke-width="2.5" fill="none"
+            stroke-dasharray="254.47 339.29" stroke-linecap="round"
+            transform="rotate(-90 64 64)" opacity="0.7"/>
+          <circle cx="10" cy="64" r="2.2" fill="#7c6af7" opacity="0.8"/>
+        </svg>
+      </div>
+      <span class="size-label">128 · desktop</span>
+    </div>
+
+    <!-- 64px -->
+    <div class="size-item">
+      <div style="position:relative; width:64px; height:64px; border-radius:14px; background:linear-gradient(145deg,#1c0933 0%,#06030e 100%); box-shadow:0 0 20px rgba(134,59,255,0.4), inset 0 0 0 0.6px rgba(134,59,255,0.18); overflow:hidden;">
+        <!-- Flat bolt at 64px (holographic too subtle at this size) -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="31" fill="none" viewBox="0 0 48 46"
+          style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <!-- Time ring overlay — r=27, center=(32,32), C=169.65, 75%=127.24 -->
+        <svg viewBox="0 0 64 64" width="64" height="64" fill="none"
+          style="position:absolute; top:0; left:0; pointer-events:none;">
+          <circle cx="32" cy="32" r="27" stroke="rgba(255,255,255,0.08)" stroke-width="1" fill="none"/>
+          <circle cx="32" cy="32" r="27"
+            stroke="#7c6af7" stroke-width="2" fill="none"
+            stroke-dasharray="127.24 169.65" stroke-linecap="round"
+            transform="rotate(-90 32 32)" opacity="0.65"/>
+        </svg>
+      </div>
+      <span class="size-label">64 · web / dock</span>
+    </div>
+
+    <!-- 32px: bolt only -->
+    <div class="size-item">
+      <div style="width:32px; height:32px; border-radius:7px; background:linear-gradient(135deg,#1a0a2e 0%,#0f0f13 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(134,59,255,0.5);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="17" fill="none" viewBox="0 0 48 46">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+      </div>
+      <span class="size-label">32 · bolt only</span>
+    </div>
+
+  </div>
+
+  <!-- On-light variant -->
+  <div style="margin-top:40px;">
+    <div style="font-size:10px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#6b6b8a; margin-bottom:20px;">On white / tinted bg</div>
+    <div style="display:flex; gap:24px; align-items:center; background:#f4f3ff; padding:32px; border-radius:16px; max-width:380px; border:1px solid #d4d0f8;">
+      <div style="position:relative; width:96px; height:96px; border-radius:21px; background:linear-gradient(145deg,#2d1260 0%,#0f0820 100%); box-shadow:0 4px 24px rgba(124,106,247,0.35), inset 0 0 0 0.6px rgba(124,106,247,0.25); overflow:hidden; flex-shrink:0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="48" fill="none" viewBox="0 0 48 46"
+          style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">
+          <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+        </svg>
+        <svg viewBox="0 0 96 96" width="96" height="96" fill="none"
+          style="position:absolute; top:0; left:0; pointer-events:none;">
+          <circle cx="48" cy="48" r="40" stroke="rgba(255,255,255,0.08)" stroke-width="1.2" fill="none"/>
+          <circle cx="48" cy="48" r="40"
+            stroke="#7c6af7" stroke-width="2.2" fill="none"
+            stroke-dasharray="188.50 251.33" stroke-linecap="round"
+            transform="rotate(-90 48 48)" opacity="0.75"/>
+          <circle cx="8" cy="48" r="2" fill="#7c6af7" opacity="0.85"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:'Inter',sans-serif; font-size:20px; font-weight:200; color:#3b0764; letter-spacing:-0.3px;">Flow</div>
+        <div style="font-family:'Inter',sans-serif; font-size:20px; font-weight:800; color:#6d28d9; margin-top:-4px; letter-spacing:-1px;">Tyme</div>
+        <div style="font-size:9px; letter-spacing:3px; color:#9997c4; margin-top:6px; text-transform:uppercase;">Time Boxing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     NAVBAR PREVIEW (how it looks in-app)
+═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header">In-app usage — navbar</div>
+
+  <!-- Dark navbar -->
+  <div style="background:#1a1a24; border:1px solid #2a2a38; border-radius:12px; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; max-width:800px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="21" fill="none" viewBox="0 0 48 46">
+        <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+      </svg>
+      <span style="font-family:'Inter',sans-serif; font-size:17px; font-weight:200; color:rgba(232,232,240,0.8); letter-spacing:-0.3px;">Flow</span><span style="font-family:'Inter',sans-serif; font-size:17px; font-weight:700; color:#7c6af7; letter-spacing:-0.8px;">Tyme</span>
+    </div>
+    <div style="display:flex; gap:24px; font-size:13px; color:#6b6b8a; font-family:'Inter',sans-serif;">
+      <span style="color:#e8e8f0;">Dashboard</span>
+      <span>Proposals</span>
+      <span>Setup</span>
+    </div>
+  </div>
+
+  <!-- Light navbar -->
+  <div style="background:#ffffff; border:1px solid #e0dff8; border-radius:12px; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; max-width:800px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="21" fill="none" viewBox="0 0 48 46">
+        <path fill="#7c3aed" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+      </svg>
+      <span style="font-family:'Inter',sans-serif; font-size:17px; font-weight:200; color:#4c1d95; letter-spacing:-0.3px;">Flow</span><span style="font-family:'Inter',sans-serif; font-size:17px; font-weight:700; color:#6d28d9; letter-spacing:-0.8px;">Tyme</span>
+    </div>
+    <div style="display:flex; gap:24px; font-size:13px; color:#9997c4; font-family:'Inter',sans-serif;">
+      <span style="color:#141423; font-weight:500;">Dashboard</span>
+      <span>Proposals</span>
+      <span>Setup</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     COLOR PALETTE
+═══════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header">Brand colors</div>
+  <div class="swatches">
+
+    <div class="swatch">
+      <div class="swatch-box" style="background:#863bff;"></div>
+      <span class="swatch-name">Bolt</span>
+      <span class="swatch-hex">#863bff</span>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-box" style="background:#7c6af7;"></div>
+      <span class="swatch-name">Accent</span>
+      <span class="swatch-hex">#7c6af7</span>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-box" style="background:#5b45e0;"></div>
+      <span class="swatch-name">Deep</span>
+      <span class="swatch-hex">#5b45e0</span>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-box" style="background:#a78bfa;"></div>
+      <span class="swatch-name">Light</span>
+      <span class="swatch-hex">#a78bfa</span>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-box" style="background:#47bfff;"></div>
+      <span class="swatch-name">Spark</span>
+      <span class="swatch-hex">#47bfff</span>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-box" style="background:#0f0f13;"></div>
+      <span class="swatch-name">Void</span>
+      <span class="swatch-hex">#0f0f13</span>
+    </div>
+
+    <div class="swatch">
+      <div class="swatch-box" style="background:#1a1a24;"></div>
+      <span class="swatch-name">Surface</span>
+      <span class="swatch-hex">#1a1a24</span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     TAGLINE VARIANTS
+═══════════════════════════════════════════════════════ -->
+<section class="section" style="border-bottom:1px solid var(--dark-border); margin-bottom:0; padding-bottom:80px;">
+  <div class="section-header">Tagline variants</div>
+  <div style="display:flex; flex-direction:column; gap:20px;">
+    <div>
+      <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:500; letter-spacing:4px; text-transform:uppercase; color:#6b6b8a;">Time Boxing Assistant</span>
+      <span style="margin-left:20px; font-size:10px; color:#2a2a38; letter-spacing:2px;">PRIMARY</span>
+    </div>
+    <div>
+      <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:400; letter-spacing:3px; text-transform:uppercase; color:#6b6b8a;">Get into flow. Stay on time.</span>
+      <span style="margin-left:20px; font-size:10px; color:#2a2a38; letter-spacing:2px;">ALT</span>
+    </div>
+    <div>
+      <span style="font-family:'Inter',sans-serif; font-size:13px; font-weight:400; letter-spacing:3px; text-transform:uppercase; color:#6b6b8a;">Block time. Build momentum.</span>
+      <span style="margin-left:20px; font-size:10px; color:#2a2a38; letter-spacing:2px;">ALT 2</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

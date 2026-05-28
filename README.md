@@ -1,13 +1,10 @@
 <div align="center">
 
-```
-███████╗██╗      ██████╗ ██╗    ██╗████████╗██╗   ██╗███╗   ███╗███████╗
-██╔════╝██║     ██╔═══██╗██║    ██║╚══██╔══╝╚██╗ ██╔╝████╗ ████║██╔════╝
-█████╗  ██║     ██║   ██║██║ █╗ ██║   ██║    ╚████╔╝ ██╔████╔██║█████╗  
-██╔══╝  ██║     ██║   ██║██║███╗██║   ██║     ╚██╔╝  ██║╚██╔╝██║██╔══╝  
-██║     ███████╗╚██████╔╝╚███╔███╔╝   ██║      ██║   ██║ ╚═╝ ██║███████╗
-╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝    ╚═╝      ╚═╝   ╚═╝     ╚═╝╚══════╝
-```
+<img src="client/public/favicon.svg" alt="FlowTyme" width="72" height="69" />
+
+# Flow**Tyme**
+
+### Time Boxing Assistant
 
 **Plugin-based time-boxing assistant. Any task source + any calendar → structured day, automatically.**
 
@@ -18,8 +15,6 @@
 [![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-<img src="client/src/assets/hero.png" alt="FlowTyme hero" width="220" />
 
 </div>
 
@@ -290,6 +285,8 @@ Bug reports and feature requests welcome via [Issues](../../issues).
 ---
 
 <div align="center">
+
+<img src="client/public/favicon.svg" alt="FlowTyme" width="32" height="31" />
 
 Built for personal use. Open-sourced because others might want this too.
 

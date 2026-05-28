@@ -2,7 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { execSync } from 'child_process';
 
+import { getConfig } from './services/category-mapper';
 import calendarRouter from './routes/calendar';
 import notionRouter from './routes/notion';
 import slotsRouter from './routes/slots';
@@ -36,9 +38,16 @@ async function getMongoUri(): Promise<string> {
     mongoose.connection.close().catch(() => {});
     const { MongoMemoryServer } = await import('mongodb-memory-server');
     const memServer = await MongoMemoryServer.create();
-    console.warn('MongoDB not found — using in-memory server (data resets on restart)');
+    console.warn('⚠️  MongoDB not found — using in-memory server. Run: brew services start mongodb-community');
+    console.warn('⚠️  Config and proposals will reset on every restart until MongoDB is running.');
     return memServer.getUri();
   }
+}
+
+function killPort(port: number | string) {
+  try {
+    execSync(`lsof -ti :${port} | xargs kill -9 2>/dev/null || true`, { stdio: 'ignore' });
+  } catch { /* ignore */ }
 }
 
 async function start() {
@@ -48,6 +57,14 @@ async function start() {
       await mongoose.connect(uri);
     }
     console.log('MongoDB connected');
+
+    // Seed config from .flowtyme-config.json if MongoDB is empty (covers in-memory restarts)
+    await getConfig();
+
+    // Kill any stale process holding the port (nodemon restarts skip predev)
+    killPort(PORT);
+    await new Promise(r => setTimeout(r, 200));
+
     app.listen(PORT, () => console.log(`Server running on :${PORT}`));
   } catch (err) {
     console.error('Startup failed:', err);

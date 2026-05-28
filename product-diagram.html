@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FlowTyme — Product Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050508;
+    --surface: #0d0d14;
+    --surface2: #12121e;
+    --border: rgba(255,255,255,0.07);
+    --border-glow: rgba(139,92,246,0.3);
+    --purple: #8b5cf6;
+    --purple-light: #a78bfa;
+    --indigo: #6366f1;
+    --cyan: #06b6d4;
+    --emerald: #10b981;
+    --rose: #f43f5e;
+    --amber: #f59e0b;
+    --text: #f8fafc;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(139,92,246,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,92,246,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .bg-glow {
+    position: fixed; z-index: 0;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    animation: float 8s ease-in-out infinite;
+  }
+  .bg-glow-1 { width: 600px; height: 600px; top: -200px; left: 10%; background: var(--purple); animation-delay: 0s; }
+  .bg-glow-2 { width: 500px; height: 500px; top: 40%; right: -100px; background: var(--cyan); animation-delay: -3s; }
+  .bg-glow-3 { width: 400px; height: 400px; bottom: 10%; left: 30%; background: var(--indigo); animation-delay: -5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-30px); }
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 60px 24px 100px; }
+
+  /* ── HERO ── */
+  .hero { text-align: center; margin-bottom: 80px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 100px; padding: 5px 14px; font-size: 12px; font-weight: 500;
+    color: var(--purple-light); letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+
+  .hero-title {
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .hero-title span {
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 18px; color: var(--text-dim); font-weight: 400; max-width: 520px;
+    margin: 0 auto 8px; line-height: 1.6;
+  }
+  .hero-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--text-muted); letter-spacing: 0.08em;
+    margin-top: 12px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 28px;
+  }
+
+  /* ── MAIN ARCHITECTURE DIAGRAM ── */
+  .arch { margin-bottom: 80px; }
+
+  .arch-flow {
+    display: flex; flex-direction: column; gap: 0; align-items: center;
+  }
+
+  /* Source layer */
+  .layer {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    background: var(--surface);
+    backdrop-filter: blur(20px);
+  }
+  .layer::before {
+    content: ''; position: absolute; inset: 0; border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .layer-source { border-color: rgba(139,92,246,0.2); }
+  .layer-source::after {
+    content: ''; position: absolute; inset: -1px; border-radius: 20px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), transparent);
+    z-index: -1; pointer-events: none;
+  }
+  .layer-engine { border-color: rgba(99,102,241,0.3); background: #0f0f1a; }
+  .layer-engine::after {
+    content: ''; position: absolute; inset: -1px; border-radius: 20px;
+    box-shadow: 0 0 60px rgba(99,102,241,0.12), inset 0 0 40px rgba(99,102,241,0.04);
+    z-index: -1; pointer-events: none;
+  }
+  .layer-calendar { border-color: rgba(6,182,212,0.2); }
+  .layer-calendar::after {
+    content: ''; position: absolute; inset: -1px; border-radius: 20px;
+    background: linear-gradient(225deg, rgba(6,182,212,0.1), transparent);
+    z-index: -1; pointer-events: none;
+  }
+
+  .layer-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .layer-tag-pill {
+    padding: 3px 10px; border-radius: 100px; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .tag-source .layer-tag-pill { background: rgba(139,92,246,0.15); color: var(--purple-light); }
+  .tag-engine .layer-tag-pill { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+  .tag-calendar .layer-tag-pill { background: rgba(6,182,212,0.15); color: #67e8f9; }
+
+  .layer-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .layer-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+
+  /* Plugin cards inside layers */
+  .plugin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .plugin-card {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 8px;
+    transition: all 0.2s ease; position: relative; overflow: hidden;
+  }
+  .plugin-card:hover { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); transform: translateY(-1px); }
+  .plugin-card.active { border-color: rgba(139,92,246,0.3); }
+  .plugin-card.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--purple), var(--indigo)); }
+  .plugin-card.active-cyan::before { background: linear-gradient(90deg, var(--cyan), var(--indigo)); }
+  .plugin-card.active-cyan { border-color: rgba(6,182,212,0.3); }
+  .plugin-card.muted { opacity: 0.4; }
+
+  .plugin-icon {
+    width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .plugin-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .plugin-meta { font-size: 11px; color: var(--text-muted); }
+  .plugin-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 4px;
+    width: fit-content;
+  }
+  .badge-live { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+  .badge-soon { background: rgba(245,158,11,0.1); color: #fcd34d; }
+  .badge-ai { background: rgba(139,92,246,0.15); color: var(--purple-light); }
+
+  /* Arrow connectors */
+  .arch-connector {
+    display: flex; flex-direction: column; align-items: center; padding: 4px 0; gap: 2px;
+  }
+  .arch-connector-line {
+    width: 2px; height: 20px;
+    background: linear-gradient(to bottom, rgba(99,102,241,0.4), rgba(99,102,241,0.6));
+  }
+  .arch-connector-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--indigo); font-weight: 500;
+    background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15);
+    padding: 3px 10px; border-radius: 100px;
+  }
+  .arch-connector-arrow { color: rgba(99,102,241,0.6); font-size: 14px; line-height: 1; }
+
+  /* ── ENGINE INTERNALS ── */
+  .engine-internals { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; }
+  .engine-step {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(99,102,241,0.15);
+    border-radius: 12px; padding: 16px;
+  }
+  .engine-step-title { font-size: 13px; font-weight: 600; color: #c7d2fe; margin-bottom: 4px; }
+  .engine-step-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+  .engine-arrow { color: rgba(99,102,241,0.5); font-size: 24px; text-align: center; }
+
+  .engine-feature-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .engine-chip {
+    font-size: 10px; font-weight: 500; padding: 4px 10px; border-radius: 6px;
+    background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.15);
+  }
+
+  /* ── USER JOURNEY ── */
+  .journey { margin-bottom: 80px; }
+  .journey-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .journey-step { position: relative; }
+  .journey-step-inner {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px 18px;
+    height: 100%;
+    transition: all 0.2s;
+  }
+  .journey-step-inner:hover { border-color: rgba(255,255,255,0.1); background: var(--surface2); }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    color: var(--text-muted); margin-bottom: 12px;
+  }
+  .step-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+  .step-detail {
+    margin-top: 12px; font-size: 11px; color: var(--text-muted);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .step-detail-item { display: flex; align-items: flex-start; gap: 6px; }
+  .step-detail-item::before { content: '→'; color: var(--indigo); flex-shrink: 0; }
+
+  /* connector between steps */
+  .journey-connector {
+    position: absolute; right: -18px; top: 50%; transform: translateY(-50%);
+    z-index: 2; width: 36px; height: 2px;
+    background: linear-gradient(90deg, rgba(99,102,241,0.3), rgba(99,102,241,0.5));
+    display: flex; align-items: center; justify-content: flex-end;
+  }
+  .journey-connector::after { content: '▶'; font-size: 10px; color: rgba(99,102,241,0.6); }
+
+  /* ── PLUGINS YAML ── */
+  .yaml-section { margin-bottom: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .yaml-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    overflow: hidden;
+  }
+  .yaml-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.02);
+  }
+  .yaml-header-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .yaml-header-sub { font-size: 11px; color: var(--text-muted); }
+  .yaml-dots { display: flex; gap: 6px; }
+  .yaml-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .yaml-dot-r { background: #ff5f56; }
+  .yaml-dot-y { background: #ffbd2e; }
+  .yaml-dot-g { background: #27c93f; }
+  pre.yaml-code {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7;
+    padding: 20px; color: var(--text-dim); overflow: auto;
+  }
+  .y-key { color: #7dd3fc; }
+  .y-val { color: #86efac; }
+  .y-str { color: #fca5a5; }
+  .y-comment { color: #4b5563; }
+  .y-bool { color: #c4b5fd; }
+
+  .feature-list { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .feature-item { display: flex; gap: 12px; align-items: flex-start; }
+  .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .feature-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .feature-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── SKILLS ROW ── */
+  .skills { margin-bottom: 80px; }
+  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .skill-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px;
+    transition: all 0.2s;
+  }
+  .skill-card:hover { border-color: rgba(139,92,246,0.25); background: var(--surface2); transform: translateY(-2px); }
+  .skill-cmd {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500;
+    color: var(--purple-light); background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.15); padding: 5px 10px; border-radius: 6px;
+    display: inline-block; width: fit-content;
+  }
+  .skill-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .skill-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── BOTTOM STATS ── */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 60px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 16px; text-align: center;
+  }
+  .stat-num {
+    font-size: 28px; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text), var(--text-dim));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .stat-num.purple { background: linear-gradient(135deg, var(--purple-light), var(--purple)); -webkit-background-clip: text; }
+  .stat-num.cyan { background: linear-gradient(135deg, var(--cyan), var(--indigo)); -webkit-background-clip: text; }
+  .stat-num.emerald { background: linear-gradient(135deg, var(--emerald), var(--cyan)); -webkit-background-clip: text; }
+  .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+  /* ── DATA FLOW ANIMATION ── */
+  .data-flow-row {
+    display: flex; align-items: center; gap: 0; overflow: hidden;
+    margin-top: 12px; height: 20px; position: relative;
+  }
+  .data-flow-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    animation: flowRight 2.5s linear infinite;
+  }
+  .data-flow-dot:nth-child(1) { animation-delay: 0s; background: var(--purple); }
+  .data-flow-dot:nth-child(2) { animation-delay: 0.8s; background: var(--indigo); }
+  .data-flow-dot:nth-child(3) { animation-delay: 1.6s; background: var(--cyan); }
+  .data-flow-line {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent);
+  }
+  @keyframes flowRight {
+    0%   { left: -10px; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: calc(100% + 10px); opacity: 0; }
+  }
+
+  /* ── GLOW ANIMATION on engine layer ── */
+  @keyframes borderGlow {
+    0%,100% { box-shadow: 0 0 20px rgba(99,102,241,0.08); }
+    50%      { box-shadow: 0 0 60px rgba(99,102,241,0.2); }
+  }
+  .layer-engine { animation: borderGlow 4s ease-in-out infinite; }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    .plugin-grid { grid-template-columns: 1fr 1fr; }
+    .journey-steps { grid-template-columns: 1fr 1fr; }
+    .journey-connector { display: none; }
+    .yaml-section { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .engine-internals { grid-template-columns: 1fr; }
+    .engine-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
+
+<div class="page">
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="badge"><span class="badge-dot"></span> Plugin-based · Open Source</div>
+    <h1 class="hero-title">Your day,<br><span>automatically structured</span></h1>
+    <p class="hero-sub">Connect any task source, any calendar. FlowTyme finds your free slots and proposes a time-blocked schedule — you drag, confirm, push.</p>
+    <p class="hero-mono">Notion · Obsidian · iCloud · Google Calendar · Outlook</p>
+  </div>
+
+  <!-- ── STATS ── -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-num purple">15min</div>
+      <div class="stat-label">slot grid resolution</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num cyan">3</div>
+      <div class="stat-label">plugin layers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num emerald">0</div>
+      <div class="stat-label">code changes to swap sources</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">1-click</div>
+      <div class="stat-label">push entire day to calendar</div>
+    </div>
+  </div>
+
+  <!-- ── ARCHITECTURE ── -->
+  <div class="arch">
+    <p class="section-label">Architecture</p>
+
+    <div class="arch-flow">
+
+      <!-- LAYER 1: SOURCES -->
+      <div class="layer layer-source">
+        <div class="layer-tag tag-source">
+          <span class="layer-tag-pill">Layer 1</span>
+          Source Plugins
+        </div>
+        <div class="layer-title">Any task source, zero lock-in</div>
+        <div class="layer-desc">Each source plugin implements one interface: <code style="color:#a78bfa;font-family:'JetBrains Mono',monospace;font-size:11px">fetchItems(date) → SourceItem[]</code>. Enable multiple — tasks merge before scheduling.</div>
+        <div class="plugin-grid">
+          <div class="plugin-card active">
+            <div class="plugin-icon" style="background:rgba(139,92,246,0.12)">📓</div>
+            <div>
+              <div class="plugin-name">Notion</div>
+              <div class="plugin-meta">3-col daily page parser</div>
+            </div>
+            <div class="plugin-badge badge-live">● Live</div>
+          </div>
+          <div class="plugin-card muted">
+            <div class="plugin-icon" style="background:rgba(99,102,241,0.08)">🗒️</div>
+            <div>
+              <div class="plugin-name">Obsidian</div>
+              <div class="plugin-meta">Daily note vault</div>
+            </div>
+            <div class="plugin-badge badge-soon">◌ Generate</div>
+          </div>
+          <div class="plugin-card muted" style="border-style:dashed">
+            <div class="plugin-icon" style="background:rgba(100,116,139,0.08)">＋</div>
+            <div>
+              <div class="plugin-name">Any source</div>
+              <div class="plugin-meta">via /generate-parser</div>
+            </div>
+            <div class="plugin-badge badge-ai">✦ AI-gen</div>
+          </div>
+        </div>
+        <div class="data-flow-row">
+          <div class="data-flow-line"></div>
+          <div class="data-flow-dot"></div>
+          <div class="data-flow-dot"></div>
+          <div class="data-flow-dot"></div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 1 -->
+      <div class="arch-connector">
+        <div class="arch-connector-line"></div>
+        <div class="arch-connector-label">SourceItem[ ]</div>
+        <div class="arch-connector-arrow">▼</div>
+      </div>
+
+      <!-- LAYER 3: ENGINE -->
+      <div class="layer layer-engine">
+        <div class="layer-tag tag-engine">
+          <span class="layer-tag-pill">Layer 3</span>
+          Core Engine
+        </div>
+        <div class="layer-title">Slot assignment + conflict resolution</div>
+        <div class="layer-desc">Reads your calendar, finds free slots on a 15-min grid, respects time-of-day partitions. Conflicts surfaced to UI — never auto-resolved.</div>
+        <div class="engine-internals">
+          <div class="engine-step">
+            <div class="engine-step-title">Category Mapper</div>
+            <div class="engine-step-desc">Maps source categories → target calendars. Reads runtime config from MongoDB.</div>
+          </div>
+          <div class="engine-arrow">→</div>
+          <div class="engine-step">
+            <div class="engine-step-title">Slot Finder</div>
+            <div class="engine-step-desc">First-fit algorithm on 15-min grid. Partition hints: morning / afternoon / evening / night. Duration defaults: task 60min, chore 15min.</div>
+          </div>
+        </div>
+        <div class="engine-feature-row">
+          <div class="engine-chip">⚡ 15-min granularity</div>
+          <div class="engine-chip">🔀 Day partitions</div>
+          <div class="engine-chip">⚠️ Conflict flags → UI</div>
+          <div class="engine-chip">⏱️ Per-category duration</div>
+          <div class="engine-chip">🔁 Multi-source merge</div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 2 -->
+      <div class="arch-connector">
+        <div class="arch-connector-line"></div>
+        <div class="arch-connector-label">ProposalItem[ ]</div>
+        <div class="arch-connector-arrow">▼</div>
+      </div>
+
+      <!-- LAYER 2: CALENDARS -->
+      <div class="layer layer-calendar">
+        <div class="layer-tag tag-calendar">
+          <span class="layer-tag-pill">Layer 2</span>
+          Calendar Plugins
+        </div>
+        <div class="layer-title">Push to any calendar backend</div>
+        <div class="layer-desc">Implements <code style="color:#67e8f9;font-family:'JetBrains Mono',monospace;font-size:11px">fetchEvents / pushEvent / pushReminder / listCalendars</code>. Swap backends via <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#94a3b8">plugins.yaml</code> — no code changes.</div>
+        <div class="plugin-grid">
+          <div class="plugin-card active-cyan">
+            <div class="plugin-icon" style="background:rgba(6,182,212,0.1)">☁️</div>
+            <div>
+              <div class="plugin-name">iCloud</div>
+              <div class="plugin-meta">CalDAV · VEVENT + VTODO</div>
+            </div>
+            <div class="plugin-badge badge-live">● Live</div>
+          </div>
+          <div class="plugin-card muted">
+            <div class="plugin-icon" style="background:rgba(59,130,246,0.08)">📅</div>
+            <div>
+              <div class="plugin-name">Google Calendar</div>
+              <div class="plugin-meta">OAuth2 · Calendar API</div>
+            </div>
+            <div class="plugin-badge badge-soon">◌ Roadmap</div>
+          </div>
+          <div class="plugin-card muted">
+            <div class="plugin-icon" style="background:rgba(59,130,246,0.08)">📧</div>
+            <div>
+              <div class="plugin-name">Outlook</div>
+              <div class="plugin-meta">Microsoft Graph API</div>
+            </div>
+            <div class="plugin-badge badge-soon">◌ Roadmap</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /arch-flow -->
+  </div><!-- /arch -->
+
+  <!-- ── USER JOURNEY ── -->
+  <div class="journey">
+    <p class="section-label">Daily Flow</p>
+    <div class="journey-steps">
+
+      <div class="journey-step">
+        <div class="journey-step-inner">
+          <div class="step-num">01</div>
+          <span class="step-icon">⚙️</span>
+          <div class="step-title">Setup</div>
+          <div class="step-desc">Map task categories to calendars. Set day partition times once.</div>
+          <div class="step-detail">
+            <div class="step-detail-item">Category → Calendar name</div>
+            <div class="step-detail-item">Morning / Afternoon / Evening</div>
+            <div class="step-detail-item">Duration overrides</div>
+          </div>
+        </div>
+        <div class="journey-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="journey-step-inner">
+          <div class="step-num">02</div>
+          <span class="step-icon">⚡</span>
+          <div class="step-title">Generate</div>
+          <div class="step-desc">Pick date. One click fetches tasks + reads calendar. Proposals computed instantly.</div>
+          <div class="step-detail">
+            <div class="step-detail-item">Reads all enabled sources</div>
+            <div class="step-detail-item">Checks live calendar</div>
+            <div class="step-detail-item">Assigns free slots</div>
+          </div>
+        </div>
+        <div class="journey-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="journey-step-inner">
+          <div class="step-num">03</div>
+          <span class="step-icon">🗓️</span>
+          <div class="step-title">Review</div>
+          <div class="step-desc">Day-view calendar. Drag blocks to resolve conflicts. Toggle accept / reject per item.</div>
+          <div class="step-detail">
+            <div class="step-detail-item">react-big-calendar DnD</div>
+            <div class="step-detail-item">Conflicts highlighted red</div>
+            <div class="step-detail-item">Per-item accept/reject</div>
+          </div>
+        </div>
+        <div class="journey-connector"></div>
+      </div>
+
+      <div class="journey-step">
+        <div class="journey-step-inner">
+          <div class="step-num">04</div>
+          <span class="step-icon">🚀</span>
+          <div class="step-title">Push</div>
+          <div class="step-desc">Review summary. One button pushes all accepted blocks to your calendar.</div>
+          <div class="step-detail">
+            <div class="step-detail-item">VEVENT calendar blocks</div>
+            <div class="step-detail-item">VTODO reminders list</div>
+            <div class="step-detail-item">Active plugin handles push</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── PLUGINS.YAML + FEATURES ── -->
+  <div class="yaml-section">
+    <div class="yaml-card">
+      <div class="yaml-header">
+        <div class="yaml-dots">
+          <div class="yaml-dot yaml-dot-r"></div>
+          <div class="yaml-dot yaml-dot-y"></div>
+          <div class="yaml-dot yaml-dot-g"></div>
+        </div>
+        <div>
+          <div class="yaml-header-title">plugins.yaml</div>
+          <div class="yaml-header-sub">Swap sources &amp; calendars — zero code changes</div>
+        </div>
+      </div>
+<pre class="yaml-code"><span class="y-key">sources</span>:
+  - <span class="y-key">id</span>: <span class="y-str">notion-daily</span>
+    <span class="y-key">type</span>: <span class="y-str">notion</span>
+    <span class="y-key">enabled</span>: <span class="y-bool">true</span>
+    <span class="y-key">config</span>:
+      <span class="y-key">databaseId</span>: <span class="y-str">"your-db-id"</span>
+      <span class="y-key">dateProperty</span>: <span class="y-str">"Date"</span>
+
+  <span class="y-comment"># - id: obsidian-vault</span>
+  <span class="y-comment">#   type: obsidian</span>
+  <span class="y-comment">#   enabled: false</span>
+
+<span class="y-key">calendars</span>:
+  - <span class="y-key">id</span>: <span class="y-str">icloud-primary</span>
+    <span class="y-key">type</span>: <span class="y-str">icloud</span>
+    <span class="y-key">enabled</span>: <span class="y-bool">true</span>
+    <span class="y-key">config</span>: {}
+
+  <span class="y-comment"># - id: google-work</span>
+  <span class="y-comment">#   type: google</span>
+  <span class="y-comment">#   enabled: false</span>
+</pre>
+    </div>
+
+    <div class="yaml-card">
+      <div class="yaml-header">
+        <div>
+          <div class="yaml-header-title">Why plugin architecture</div>
+          <div class="yaml-header-sub">Built to last beyond any one tool</div>
+        </div>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">🔌</div>
+          <div>
+            <div class="feature-title">Edit YAML, not code</div>
+            <div class="feature-desc">Enable a new source or calendar by editing one config file and restarting. Core engine untouched.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔀</div>
+          <div>
+            <div class="feature-title">Multiple sources merge</div>
+            <div class="feature-desc">Enable Notion + Obsidian simultaneously. All SourceItem[] flatten before slot assignment.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🤫</div>
+          <div>
+            <div class="feature-title">Secrets stay in .env</div>
+            <div class="feature-desc">plugins.yaml never holds credentials. Tokens and passwords always in environment variables.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">✦</div>
+          <div>
+            <div class="feature-title">AI-generated adapters</div>
+            <div class="feature-desc">Describe a new source → /generate-parser writes the TypeScript plugin. Describe a calendar → /add-calendar-plugin does the same.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CLAUDE CODE SKILLS ── -->
+  <div class="skills">
+    <p class="section-label">Claude Code Skills</p>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-cmd">/generate-parser</div>
+        <div class="skill-title">New source in minutes</div>
+        <div class="skill-desc">Describe your data format in a config file → Claude generates a fully typed ISourcePlugin adapter. No boilerplate.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">/add-calendar-plugin</div>
+        <div class="skill-title">New calendar backend</div>
+        <div class="skill-desc">Name a calendar service → Claude generates the ICalendarPlugin implementation + auth setup guide.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">/map-categories</div>
+        <div class="skill-title">Auto-map categories</div>
+        <div class="skill-desc">Claude reads your source categories and available calendars → generates the Config mapping automatically.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">/generate-day</div>
+        <div class="skill-title">Run today's pipeline</div>
+        <div class="skill-desc">Full pipeline from terminal: fetch → generate slots → output proposal summary. No browser needed.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">/test-notion</div>
+        <div class="skill-title">Debug parser</div>
+        <div class="skill-desc">Test Notion parser against today's page. See raw block tree and parsed SourceItem[] in terminal.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">/run</div>
+        <div class="skill-title">Launch dev servers</div>
+        <div class="skill-desc">Starts Express (port 3001) + Vite (port 5173) in one command.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STACK ROW ── -->
+  <div style="text-align:center; color:var(--text-muted); font-size:12px; margin-bottom:24px;">
+    <span style="margin:0 10px">React 18</span>
+    <span style="color:var(--border)">·</span>
+    <span style="margin:0 10px">Vite</span>
+    <span style="color:var(--border)">·</span>
+    <span style="margin:0 10px">TypeScript</span>
+    <span style="color:var(--border)">·</span>
+    <span style="margin:0 10px">Express</span>
+    <span style="color:var(--border)">·</span>
+    <span style="margin:0 10px">MongoDB</span>
+    <span style="color:var(--border)">·</span>
+    <span style="margin:0 10px">tsdav</span>
+    <span style="color:var(--border)">·</span>
+    <span style="margin:0 10px">@notionhq/client</span>
+    <span style="color:var(--border)">·</span>
+    <span style="margin:0 10px">react-big-calendar</span>
+  </div>
+  <div style="text-align:center; color:var(--text-muted); font-size:11px; opacity:0.5">
+    Built for personal use. Open-sourced because others might want this too.
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -218,7 +218,6 @@ export async function pushReminder(params: {
     `DUE:${formatICSDate(params.dueTime)}`,
     `SUMMARY:${params.title}`,
     'STATUS:NEEDS-ACTION',
-    `VALARM:TRIGGER:-PT0M`,
     'END:VTODO',
     'END:VCALENDAR',
   ].join('\r\n');

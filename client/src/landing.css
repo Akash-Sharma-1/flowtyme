@@ -20,6 +20,23 @@
   --ih-node-bg: #110a1e;
   --ih-claude-bg: #160a03;
   --ih-claude-stroke: #d97757;
+  --ih-ring-outer: #818cf8;
+  --ih-ring-inner: #a78bfa;
+  --ih-ring-claude: #f0a080;
+  --ih-ring-opacity-outer: 0.55;
+  --ih-ring-opacity-inner: 0.48;
+  --ih-ring-opacity-claude: 0.52;
+  --ih-hub-stop-0: #311b6b;
+  --ih-hub-stop-55: #1a1045;
+  --ih-hub-stop-100: #0e0b22;
+  --ih-hub-border: #6d28d9;
+  --ih-hub-border-opacity: 0.85;
+  --ih-hub-glow: #7c3aed;
+  --ih-hub-title-0: #c4b5fd;
+  --ih-hub-title-1: #7dd3fc;
+  --ih-hub-sub: #94a3b8;
+  --ih-hub-claude-label: #d97757;
+  --ih-hub-claude-label-opacity: 0.75;
   --ih-label: #64748b;
   --landing-nav-glass: rgba(13, 13, 22, 0.72);
   --landing-nav-border: rgba(255, 255, 255, 0.09);
@@ -47,6 +64,23 @@
   --ih-node-bg: #eef0ff;
   --ih-claude-bg: #fff5f0;
   --ih-claude-stroke: #d97757;
+  --ih-ring-outer: #4f46e5;
+  --ih-ring-inner: #7c3aed;
+  --ih-ring-claude: #c2410c;
+  --ih-ring-opacity-outer: 0.62;
+  --ih-ring-opacity-inner: 0.55;
+  --ih-ring-opacity-claude: 0.58;
+  --ih-hub-stop-0: #faf8ff;
+  --ih-hub-stop-55: #ede9fe;
+  --ih-hub-stop-100: #ddd6fe;
+  --ih-hub-border: #7c3aed;
+  --ih-hub-border-opacity: 0.55;
+  --ih-hub-glow: #a78bfa;
+  --ih-hub-title-0: #5b21b6;
+  --ih-hub-title-1: #0e7490;
+  --ih-hub-sub: #5b5676;
+  --ih-hub-claude-label: #c2410c;
+  --ih-hub-claude-label-opacity: 0.9;
   --ih-label: #4b5563;
   --landing-nav-glass: rgba(255, 255, 255, 0.78);
   --landing-nav-border: rgba(20, 20, 40, 0.1);
@@ -650,6 +684,22 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+.ih-ring {
+  fill: none;
+}
+.ih-ring-outer {
+  stroke: var(--ih-ring-outer);
+  opacity: var(--ih-ring-opacity-outer);
+}
+.ih-ring-inner {
+  stroke: var(--ih-ring-inner);
+  opacity: var(--ih-ring-opacity-inner);
+}
+.ih-ring-claude {
+  stroke: var(--ih-ring-claude);
+  opacity: var(--ih-ring-opacity-claude);
+}
+
 .ih-spin-slow {
   animation: ih-spin 16s linear infinite;
   transform-origin: var(--ih-hub-cx, 570px) var(--ih-hub-cy, 390px);

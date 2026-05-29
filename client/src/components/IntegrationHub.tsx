@@ -155,13 +155,13 @@ export default function IntegrationHub() {
             <stop offset="100%" stopColor="var(--ih-bg-edge)" />
           </radialGradient>
           <radialGradient id="ih-hub" cx="38%" cy="28%" r="90%">
-            <stop offset="0%" stopColor="#311b6b" />
-            <stop offset="55%" stopColor="#1a1045" />
-            <stop offset="100%" stopColor="#0e0b22" />
+            <stop offset="0%" stopColor="var(--ih-hub-stop-0)" />
+            <stop offset="55%" stopColor="var(--ih-hub-stop-55)" />
+            <stop offset="100%" stopColor="var(--ih-hub-stop-100)" />
           </radialGradient>
           <linearGradient id="ih-ftg" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#c4b5fd" />
-            <stop offset="100%" stopColor="#7dd3fc" />
+            <stop offset="0%" stopColor="var(--ih-hub-title-0)" />
+            <stop offset="100%" stopColor="var(--ih-hub-title-1)" />
           </linearGradient>
           <filter id="ih-blur">
             <feGaussianBlur stdDeviation="14" />
@@ -170,7 +170,7 @@ export default function IntegrationHub() {
 
         <rect width={VW} height={VH} rx="22" fill="url(#ih-bg)" />
 
-        <ellipse cx={HUB_CX} cy={HUB_CY} rx="320" ry="240" fill="#7c3aed" opacity="0.08" filter="url(#ih-blur)" className="ih-pulse" />
+        <ellipse cx={HUB_CX} cy={HUB_CY} rx="320" ry="240" fill="var(--ih-hub-glow)" opacity="0.12" filter="url(#ih-blur)" className="ih-pulse" />
 
         {/* Column titles — above nodes, not overlapping circles */}
         <text x={SOURCE_X} y={24} textAnchor="middle" fontSize="8.5" fontWeight="700" letterSpacing="0.14em" fill="#7c3aed" opacity="0.9">
@@ -184,9 +184,9 @@ export default function IntegrationHub() {
         </text>
 
         {/* Decorative rings (under connection lines) */}
-        <circle cx={HUB_CX} cy={HUB_CY} r={RING_OUTER} fill="none" stroke="#6366f1" strokeWidth="1" strokeDasharray="7 15" opacity="0.28" className="ih-spin-slow" />
-        <circle cx={HUB_CX} cy={HUB_CY} r={RING_INNER} fill="none" stroke="#8b5cf6" strokeWidth="1" strokeDasharray="3 22" opacity="0.22" className="ih-spin-rev" />
-        <circle cx={HUB_CX} cy={HUB_CY} r={RING_CLAUDE} fill="none" stroke="#D97757" strokeWidth="0.9" strokeDasharray="4 20" opacity="0.28" className="ih-spin-slow" />
+        <circle cx={HUB_CX} cy={HUB_CY} r={RING_OUTER} fill="none" strokeWidth="1.15" strokeDasharray="7 15" className="ih-ring ih-ring-outer ih-spin-slow" />
+        <circle cx={HUB_CX} cy={HUB_CY} r={RING_INNER} fill="none" strokeWidth="1.15" strokeDasharray="3 22" className="ih-ring ih-ring-inner ih-spin-rev" />
+        <circle cx={HUB_CX} cy={HUB_CY} r={RING_CLAUDE} fill="none" strokeWidth="1.1" strokeDasharray="4 20" className="ih-ring ih-ring-claude ih-spin-slow" />
 
         {/* Sources → hub */}
         {SOURCES.map(([, stroke], i) => (
@@ -220,7 +220,7 @@ export default function IntegrationHub() {
 
         {/* Hub center fill + border */}
         <circle cx={HUB_CX} cy={HUB_CY} r={HUB_R} fill="url(#ih-hub)" />
-        <circle cx={HUB_CX} cy={HUB_CY} r={HUB_R} fill="none" stroke="#6d28d9" strokeWidth="1.8" opacity="0.85" />
+        <circle cx={HUB_CX} cy={HUB_CY} r={HUB_R} fill="none" stroke="var(--ih-hub-border)" strokeWidth="1.8" opacity="var(--ih-hub-border-opacity)" />
 
         {/* Claude Code orbiting badge — sits on outer orange ring */}
         <g className="ih-claude-orbit">
@@ -235,10 +235,10 @@ export default function IntegrationHub() {
         <text x={HUB_CX} y={HUB_CY - 6} textAnchor="middle" dominantBaseline="central" fontSize="20" fontWeight="800" fill="url(#ih-ftg)">
           FlowTyme
         </text>
-        <text x={HUB_CX} y={HUB_CY + 22} textAnchor="middle" fontSize="8.5" fill="var(--ih-label)" letterSpacing="0.14em" fontWeight="600">
+        <text x={HUB_CX} y={HUB_CY + 22} textAnchor="middle" fontSize="8.5" fill="var(--ih-hub-sub)" letterSpacing="0.14em" fontWeight="600">
           AUTO·SCHEDULE
         </text>
-        <text x={HUB_CX} y={HUB_CY + 38} textAnchor="middle" fontSize="6.5" fill="#D97757" letterSpacing="0.13em" fontWeight="700" opacity="0.75">
+        <text x={HUB_CX} y={HUB_CY + 38} textAnchor="middle" fontSize="6.5" fill="var(--ih-hub-claude-label)" letterSpacing="0.13em" fontWeight="700" opacity="var(--ih-hub-claude-label-opacity)">
           CLAUDE CODE
         </text>
 

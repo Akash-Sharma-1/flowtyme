@@ -31,7 +31,8 @@ jobs:
         env:
           VITE_BASE_PATH: /flowtyme/
         run: |
-          npm ci
+          node -v && npm -v
+          npm ci --include=optional
           npm run build
 
       # SPA: GitHub Pages serves 404.html for unknown paths

@@ -76,7 +76,8 @@ const CALENDARS: [string, string, string][] = [
 
 /** Calendar column centered on hub (4 nodes, 3 gaps) */
 const CAL_Y = CALENDARS.map((_, i) => HUB_CY - 1.5 * CAL_STEP + i * CAL_STEP);
-const CAL_HEADER_Y = CAL_Y[0] - 44;
+/** Two-line header sits above first node — offset = circle radius + label block + gap */
+const CAL_HEADER_Y = CAL_Y[0] - CAL_R - 36;
 
 /** Point on hub circle — left arc for sources, right arc for calendars */
 function hubPoint(index: number, count: number, side: 'left' | 'right'): { x: number; y: number } {

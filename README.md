@@ -1,8 +1,16 @@
 <div align="center">
 
+```
+███████╗██╗      ██████╗ ██╗    ██╗████████╗██╗   ██╗███╗   ███╗███████╗
+██╔════╝██║     ██╔═══██╗██║    ██║╚══██╔══╝╚██╗ ██╔╝████╗ ████║██╔════╝
+█████╗  ██║     ██║   ██║██║ █╗ ██║   ██║    ╚████╔╝ ██╔████╔██║█████╗
+██╔══╝  ██║     ██║   ██║██║███╗██║   ██║     ╚██╔╝  ██║╚██╔╝██║██╔══╝
+██║     ███████╗╚██████╔╝╚███╔███╔╝   ██║      ██║   ██║ ╚═╝ ██║███████╗
+╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝    ╚═╝      ╚═╝   ╚═╝     ╚═╝╚══════╝
+```
+
 <img src="client/public/favicon.svg" alt="FlowTyme" width="72" height="69" />
 
-# Flow**Tyme**
 
 ### Time Boxing Assistant
 
@@ -15,8 +23,11 @@
 [![Express](https://img.shields.io/badge/Express-4-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/demo-GitHub%20Pages-7c6af7)](https://akash-sharma-1.github.io/flowtyme/)
 
 </div>
+
+**Live landing page:** [https://akash-sharma-1.github.io/flowtyme/](https://akash-sharma-1.github.io/flowtyme/) (static marketing site; run the app locally for the full dashboard — see [Quick start](#quick-start)).
 
 ---
 

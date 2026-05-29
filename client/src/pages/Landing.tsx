@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import IntegrationHub from '../components/IntegrationHub';
+import LandingNav from '../components/LandingNav';
 import type { Theme } from '../hooks/useTheme';
 import { appEntryHref, isExternalAppEntry } from '../lib/base-path';
 import '../landing.css';
@@ -44,49 +45,7 @@ export default function Landing({
       <div className="landing-glow landing-glow-3" aria-hidden />
 
       <div className="landing-inner">
-        <header className="landing-nav">
-          {/* Bolt + ring icon + wordmark */}
-          <div className="landing-logo" style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', backgroundImage: 'none', textDecoration: 'none' }}>
-            <div style={{ position: 'relative', width: 32, height: 32, flexShrink: 0 }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="17" fill="none" viewBox="0 0 48 46"
-                style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', filter: 'drop-shadow(0 0 4px rgba(134,59,255,0.5))' }}>
-                <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
-              </svg>
-              <svg viewBox="0 0 32 32" width="32" height="32" fill="none"
-                style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}>
-                <circle cx="16" cy="16" r="13" stroke="rgba(124,106,247,0.18)" strokeWidth="1.2" fill="none"/>
-                <circle cx="16" cy="16" r="13" stroke="#7c6af7" strokeWidth="1.8" fill="none"
-                  strokeDasharray="61.26 81.68" strokeLinecap="round" transform="rotate(-90 16 16)" opacity="0.75"/>
-              </svg>
-            </div>
-            <span><span style={{ fontWeight: 200, fontSize: 17, letterSpacing: '-0.3px', color: 'var(--landing-text)', WebkitTextFillColor: 'var(--landing-text)', backgroundImage: 'none', WebkitBackgroundClip: 'unset', backgroundClip: 'unset' }}>Flow</span><span style={{ fontWeight: 800, fontSize: 17, letterSpacing: '-0.8px', color: '#7c6af7', WebkitTextFillColor: '#7c6af7', backgroundImage: 'none', WebkitBackgroundClip: 'unset', backgroundClip: 'unset' }}>Tyme</span></span>
-          </div>
-          <a href="#integrations" className="landing-nav-link">
-            Integrations
-          </a>
-          <a href="#architecture" className="landing-nav-link">
-            Architecture
-          </a>
-          <a href="#flow" className="landing-nav-link">
-            How it works
-          </a>
-          <a
-            href="https://github.com/Akash-Sharma-1/flowtyme"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="landing-nav-link"
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          >
-            <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-            </svg>
-            GitHub
-          </a>
-          <button type="button" className="landing-btn-ghost" onClick={onToggleTheme}>
-            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-          </button>
-          <AppEntryLink className="landing-btn-primary">Log in →</AppEntryLink>
-        </header>
+        <LandingNav theme={theme} onToggleTheme={onToggleTheme} />
 
         <section className="landing-hero">
           {/* Hero bolt + time ring mark */}

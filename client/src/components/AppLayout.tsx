@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import type { Theme } from '../hooks/useTheme';
+import ThemeToggle from './ThemeToggle';
 
 export default function AppLayout({
   theme,
@@ -55,14 +56,11 @@ export default function AppLayout({
         ))}
 
         <div className="flex-1" />
-        <button
-          type="button"
-          onClick={onToggleTheme}
-          className="px-3 py-2 rounded-lg text-sm font-medium border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] hover:border-[var(--color-accent)] transition-colors"
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-        </button>
+        <ThemeToggle
+          theme={theme}
+          onToggle={onToggleTheme}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] hover:border-[var(--color-accent)] transition-colors"
+        />
       </nav>
       <main className="flex-1 p-6 flex flex-col overflow-hidden">
         <Outlet />

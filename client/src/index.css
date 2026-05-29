@@ -1,38 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  /* Light theme (default) */
-  --color-bg: #f7f7fb;
-  --color-surface: #ffffff;
-  --color-border: #e6e6f2;
+  /* Dark theme (default) */
+  --color-bg: #0f0f13;
+  --color-surface: #1a1a24;
+  --color-border: #2a2a38;
   --color-accent: #7c6af7;
   --color-accent-dim: #4d3fc7;
-  --color-text: #141423;
-  --color-muted: #6b6b8a;
+  --color-text: #e8e8f0;
+  --color-muted: #8888aa;
   --color-success: #4ade80;
   --color-warning: #fbbf24;
   --color-error: #f87171;
 
-  /* react-big-calendar */
-  --rbc-bg: var(--color-surface);
-  --rbc-text: var(--color-text);
-  --rbc-header-bg: #f3f3fb;
-  --rbc-border: rgba(150,150,200,0.18);
-  --rbc-gutter-text: #7a7aa0;
-}
-
-[data-theme="dark"] {
-  --color-bg: #0f0f13;
-  --color-surface: #1a1a24;
-  --color-border: #2a2a38;
-  --color-text: #e8e8f0;
-  --color-muted: #8888aa;
-
   --rbc-bg: #14141c;
   --rbc-text: #e8e8f0;
   --rbc-header-bg: #191923;
-  --rbc-border: rgba(255,255,255,0.06);
+  --rbc-border: rgba(255, 255, 255, 0.06);
   --rbc-gutter-text: #9a9ab8;
+}
+
+[data-theme='light'] {
+  --color-bg: #f7f7fb;
+  --color-surface: #ffffff;
+  --color-border: #e6e6f2;
+  --color-text: #141423;
+  --color-muted: #6b6b8a;
+
+  --rbc-bg: var(--color-surface);
+  --rbc-text: var(--color-text);
+  --rbc-header-bg: #f3f3fb;
+  --rbc-border: rgba(150, 150, 200, 0.18);
+  --rbc-gutter-text: #7a7aa0;
 }
 
 * { box-sizing: border-box; }
